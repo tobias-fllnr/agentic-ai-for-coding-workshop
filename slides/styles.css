@@ -32,6 +32,7 @@
   --cyan: #00BEFF;      /* Hellblau — accent, active state */
   --ink: #323232;       /* Anthracite — body text */
   --go: #59B200;        /* hands-on only */
+  --err: #d90000;       /* the choice you have to make yourself */
   --paper: #ffffff;
   --tint: #eff3f8;      /* card fill */
   --rule: #cfdae6;
@@ -583,6 +584,63 @@
   padding: 14px 14px 14px 0;
   border-bottom: 1px solid var(--rule);
   font-size: 17pt !important;
+}
+
+/* ===========================================
+   FLOW ROW — the copy-and-paste loop, §1
+   =========================================== */
+
+.reveal .flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 26px 0;
+}
+
+.reveal .flow-node {
+  padding: 12px 20px;
+  border-radius: 5px;
+  font-size: 16pt;
+  font-weight: 700;
+  text-align: center;
+  background: var(--paper);
+  border: 2px solid var(--blue);
+  color: var(--blue);
+}
+
+.reveal .flow-node.fill {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+.reveal .flow-arrow {
+  font-size: 22pt;
+  color: var(--cyan);
+  line-height: 1;
+}
+
+/* Verdict line under a comparison card */
+.reveal .verdict {
+  display: block;
+  margin-top: 10px;
+  font-weight: 700;
+  font-size: 15pt;
+}
+
+.reveal .card.stop { border-left-color: var(--err); }
+.reveal .card.stop h3 { color: #a30000; }
+.reveal .card.stop .verdict { color: #a30000; }
+.reveal .card.go .verdict { color: #3f7d00; }
+
+/* Citation superscript */
+.reveal .cite {
+  vertical-align: super;
+  font-size: 9pt;
+  color: var(--muted);
+  font-weight: 700;
 }
 
 /* ===========================================

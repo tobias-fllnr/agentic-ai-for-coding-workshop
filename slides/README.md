@@ -39,6 +39,7 @@ University of Stuttgart corporate design:
 | `--cyan` | `#00BEFF` Hellblau | accents, active rail dot, bullets |
 | `--ink` | `#323232` Anthracite | body text |
 | `--go` | `#59B200` | hands-on slides only |
+| `--err` | `#d90000` | the call you have to make yourself |
 
 Type is **Uni Stuttgart Sans** — the university's own license-free web font, self-hosted
 in `fonts/`, Light + Bold only — with JetBrains Mono for code.
@@ -51,12 +52,29 @@ in `fonts/`, Light + Bold only — with JetBrains Mono for code.
 - **Hands-on slides** — `class="task"` gives the green spine and the `YOUR TURN` chip.
   Each ends with `<p class="done push">`: the *Done when* contract, pinned to the bottom.
 - **The phase rail** — `<ul class="rail">` with `is-active` / `is-done` on the `<li>`s.
-  It appears only where it carries information: the agent loop in §0 and the five §5
+  It appears only where it carries information: the agent loop in §1 and the five §5
   phases. Keep it that way.
-- **Terminal transcripts** — `<p class="term">` with `.p` `.c` `.ok` `.bad` spans. Real
-  code blocks use `<pre><code class="language-bash">` and highlight.js.
+- **Terminal transcripts** — `<p class="term">` with `.p` `.c` `.ok` `.bad` `.add` `.del`
+  spans. Real code blocks use `<pre><code class="language-bash">` and highlight.js.
+- **Comparison pairs** — `.card go` and `.card stop` with a `<span class="verdict">` for the
+  ruling. Used where the point is *which of these two matters*.
+- **`.flow`** — the copy-and-paste row in §1, `.flow-node` / `.flow-node fill` / `.flow-arrow`.
+  One slide only; the rail is the deck's diagram idiom.
+- **Citations** — `.cite` superscript, or a `.footnote` with the arXiv id.
 - Content sits in `<div class="content">` and is vertically centred; anything with
   `class="push"` pins an element to the bottom.
 - Timings are kept out of the deck on purpose — they live in
   `../Presentation/workshop_plan.md`. The answer key for the practice repo is in
   `../Presentation/instructor_notes.md`.
+
+## Facts with an expiry date
+
+The deck makes specific, dated claims on purpose — see slide 4, *This deck has a half-life*.
+Re-check these before each delivery, because they move:
+
+- Model generation and the reasoning-effort levels (§4 permissions slide).
+- Permission-mode UI labels: the mode whose config value is `default` currently shows as
+  **Manual**. These have been renamed before.
+- The four links on the tools slide, and the `/plugin install …@claude-plugins-official` syntax.
+- The ICP local-model pointer on the privacy slide — URL, model, and Mattermost command.
+- Docs live at `code.claude.com/docs`; the old `docs.anthropic.com` paths redirect.
