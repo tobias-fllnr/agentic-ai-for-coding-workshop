@@ -34,8 +34,10 @@ understand how to steer the agent with configuration (CLAUDE.md, skills) and use
 ## Locked-in design decisions
 
 - **Materials language: English** (slides, repo docs, talking points).
-- **Slides: Markdown-based** (Marp or reveal.js) — text/git-friendly, live-editable by
-  Claude Code, and can live in the repo. Not PowerPoint/Beamer.
+- **Slides: reveal.js** (`slides/index.html` + `styles.css`) — text/git-friendly,
+  live-editable by Claude Code, lives in the repo. Not PowerPoint/Beamer. Theme follows the
+  University of Stuttgart corporate design (Mittelblau/Hellblau/Anthracite, Uni Stuttgart
+  Sans); see `slides/README.md` for the conventions.
 - **Participants arrive fully set up** via a pre-workshop email: Claude Code installed &
   authenticated, GitHub account ready, repo cloned/forked, git + Python basics assumed.
   The workshop does **not** spend live time on install/auth.
@@ -90,8 +92,10 @@ Teaser / pointers only:
   Domain-light generic numerics (e.g. a small numerical routine / integrator), a feature
   to add (e.g. an extra term + a plotting script), and **a few intentionally planted
   bugs** for a debugging exercise. Must be `uv`-managed.
-- `Presentation/` — the Markdown slides **plus** the concrete session plan and talking
-  points for delivering the workshop.
+- `slides/` — the reveal.js deck as delivered (`index.html`, `styles.css`, self-hosted
+  `fonts/`), with speaker notes on every slide.
+- `Presentation/` — the concrete session plan and talking points for delivering the
+  workshop, plus the original Marp deck (`slides.md`, `slides.pdf`).
 
 ## Working conventions for future sessions
 
@@ -103,9 +107,10 @@ Teaser / pointers only:
 
 ## Open items (resolve before finalizing)
 
-- Exact Markdown slide tool (Marp vs reveal.js) — pick when starting `Presentation/`.
-- Realistic per-segment timing for a 2h session — unproven; needs a dry run.
-- Fate of the "models & reasoning effort" module (justify, fold, or trim — see above).
+- Realistic per-segment timing for a 2h session — unproven; needs a dry run. The deck is
+  42 slides, ~19 of them hands-on or divider slides.
+- **Models & reasoning effort** — resolved: folded into §4 as one card on the
+  permissions slide ("Reasoning effort").
 - **Scientific-computing angle** — numerical correctness, reproducibility, HPC/SLURM,
   notebooks are uncovered by other workshops. Decide how much to own this; it pairs
   naturally with the `uv` module (reproducibility) and TDD (numerical/property tests as

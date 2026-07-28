@@ -9,9 +9,10 @@ Participants don't use this repo; they fork the standalone practice repo **`odel
 
 ## Contents
 
-- **`Presentation/`** — the slide deck (`slides.md`, rendered `slides.pdf`), the timed
-  run-sheet (`workshop_plan.md`), the instructor answer key (`instructor_notes.md`), and
-  build/preview instructions (`README_slides.md`).
+- **`slides/`** — the deck as delivered: reveal.js (`index.html` + `styles.css`) themed to
+  the University of Stuttgart corporate design. See `slides/README.md`.
+- **`Presentation/`** — the timed run-sheet (`workshop_plan.md`), the instructor answer key
+  (`instructor_notes.md`), and the original Marp deck (`slides.md`, `slides.pdf`).
 - **`Repository/`** — the practice repository participants work in: **`odelab`**, a tiny
   1D ODE integrator with tests, CI, and a few intentionally planted bugs. Published
   separately for participants to fork (kept in sync from here).
@@ -36,7 +37,11 @@ git subtree push --prefix=Repository odelab main
 
 (`odelab` is the git remote pointing at the participant repository.)
 
-## Building the slides
+## Viewing the slides
 
-See `Presentation/README_slides.md`. In short: open `Presentation/slides.md` with the
-"Marp for VS Code" extension, or export a PDF with marp-cli.
+See `slides/README.md`. In short: serve `slides/` over HTTP and open `index.html` — press
+`S` for the speaker view with notes.
+
+```bash
+uv run --no-project python -m http.server 8765   # from slides/
+```
