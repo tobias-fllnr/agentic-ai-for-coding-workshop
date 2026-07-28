@@ -34,10 +34,10 @@ understand how to steer the agent with configuration (CLAUDE.md, skills) and use
 ## Locked-in design decisions
 
 - **Materials language: English** (slides, repo docs, talking points).
-- **Slides: reveal.js** (`Presentation/index.html` + `styles.css`) — text/git-friendly,
+- **Slides: reveal.js** (`slides/index.html` + `styles.css`) — text/git-friendly,
   live-editable by Claude Code, lives in the repo. Not PowerPoint/Beamer. Theme follows the
   University of Stuttgart corporate design (Mittelblau/Hellblau/Anthracite, Uni Stuttgart
-  Sans); see `Presentation/README_slides.md` for the conventions.
+  Sans); see `slides/README.md` for the conventions.
 - **Participants arrive fully set up** via a pre-workshop email: Claude Code installed &
   authenticated, GitHub account ready, repo cloned/forked, git + Python basics assumed.
   The workshop does **not** spend live time on install/auth.
@@ -92,8 +92,10 @@ Teaser / pointers only:
   Domain-light generic numerics (e.g. a small numerical routine / integrator), a feature
   to add (e.g. an extra term + a plotting script), and **a few intentionally planted
   bugs** for a debugging exercise. Must be `uv`-managed.
-- `Presentation/` — the Markdown slides **plus** the concrete session plan and talking
-  points for delivering the workshop.
+- `slides/` — the reveal.js deck as delivered (`index.html`, `styles.css`, self-hosted
+  `fonts/`), with speaker notes on every slide.
+- `Presentation/` — the concrete session plan and talking points for delivering the
+  workshop, plus the original Marp deck (`slides.md`, `slides.pdf`).
 
 ## Working conventions for future sessions
 

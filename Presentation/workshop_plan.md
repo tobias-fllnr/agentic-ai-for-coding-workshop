@@ -187,4 +187,4 @@ The practice repo (`../Repository/`) must exist before this plan is runnable, wi
 - [ ] Send setup email (Claude Code auth, fork+clone, `uv` install) — verify send date with organizers.
 - [ ] Decide fork-per-participant vs. shared org repo (affects §5 PR target).
 - [ ] Pilot the run-sheet end-to-end once; adjust minutes.
-- [x] Prepare slides in `Presentation/` (reveal.js, `index.html`) mirroring these sections.
+- [ ] Prepare slides in `Presentation/` (Marp/reveal.js) mirroring these sections.

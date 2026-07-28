@@ -1,61 +1,37 @@
-# Slides — preview, present & export
+# Slides — preview & export
 
-The deck is [reveal.js](https://revealjs.com/) 5 loaded from a CDN: `index.html` plus
-`styles.css`. No build step. The only local assets are `fonts/` and `images/`.
+The deck is a single self-contained [Marp](https://marp.app/) file: `slides.md`
+(dark theme + speaker notes embedded; no external assets).
 
-## Preview
+## Preview live (recommended while editing)
 
-The fonts load from `fonts/`, so serve the folder:
-
-```bash
-uv run --no-project python -m http.server 8765   # from Presentation/
-# → http://127.0.0.1:8765/index.html
-```
-
-Live-editing works the same way: save `index.html` or `styles.css`, reload the page.
-
-## Presenting
-
-- **`S`** — speaker view: notes, timer, next slide. Every slide carries notes.
-- **`Esc`** / **`O`** — slide overview, to jump between sections.
-- **`B`** — blank the screen while people work.
-- **`F`** — fullscreen. Arrows or space to advance.
-
-The deck is deliberately linear — `→` walks every slide in order.
+- **VS Code:** install the **"Marp for VS Code"** extension, open `slides.md`, click the
+  preview icon. Speaker notes and per-slide layout render as you type — ideal for
+  live-editing during the workshop.
 
 ## Export
 
+Needs Node (uses `npx`, no install):
+
 ```bash
-npx decktape reveal "http://127.0.0.1:8765/index.html?print-pdf" slides.pdf
+# HTML (has a presenter view — press "p" in the browser)
+npx @marp-team/marp-cli@latest slides.md -o slides.html
+
+# PDF
+npx @marp-team/marp-cli@latest slides.md --pdf -o slides.pdf
+
+# PDF with speaker notes included
+npx @marp-team/marp-cli@latest slides.md --pdf --pdf-notes -o slides-notes.pdf
+
+# PowerPoint (if you must)
+npx @marp-team/marp-cli@latest slides.md --pptx -o slides.pptx
 ```
-
-## Theme
-
-University of Stuttgart corporate design:
-
-| Token | Value | Use |
-|---|---|---|
-| `--blue` | `#004191` Mittelblau | headings, rules, section dividers |
-| `--cyan` | `#00BEFF` Hellblau | accents, active rail dot, bullets |
-| `--ink` | `#323232` Anthracite | body text |
-| `--go` | `#59B200` | hands-on slides only |
-
-Type is **Uni Stuttgart Sans** — the university's own license-free web font, self-hosted
-in `fonts/`, Light + Bold only — with JetBrains Mono for code.
 
 ## Conventions in this deck
 
-- **Speaker notes** live in `<aside class="notes">`.
-- **Section dividers** — `class="section-divider" data-state="is-divider"`; the
-  `<p class="sec-num">` is the bled watermark numeral, clipped by `overflow: hidden`.
-- **Hands-on slides** — `class="task"` gives the green spine and the `YOUR TURN` chip.
-  Each ends with `<p class="done push">`: the *Done when* contract, pinned to the bottom.
-- **The phase rail** — `<ul class="rail">` with `is-active` / `is-done` on the `<li>`s.
-  It appears only where it carries information: the agent loop in §0 and the five §5
-  phases. Keep it that way.
-- **Terminal transcripts** — `<p class="term">` with `.p` `.c` `.ok` `.bad` spans. Real
-  code blocks use `<pre><code class="language-bash">` and highlight.js.
-- Content sits in `<div class="content">` and is vertically centred; anything with
-  `class="push"` pins an element to the bottom.
+- **Speaker notes** live in `<!-- ... -->` comments (Marp presenter view / `--pdf-notes`).
+- **Section dividers** use `<!-- _class: divider -->`; **task cards** use `<!-- _class: task -->`.
+- The per-section **footer** (`§N · topic`) is set once per section via
+  `<!-- footer: '...' -->` and carries forward.
 - Timings are kept out of the deck on purpose — they live in `workshop_plan.md`. The
   answer key for the practice repo is in `instructor_notes.md`.
