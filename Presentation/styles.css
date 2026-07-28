@@ -1,0 +1,619 @@
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/400.css');
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/700.css');
+
+/* ===========================================
+   TYPEFACE — Uni Stuttgart Sans
+   The university's own license-free web font.
+   Two weights only: Light (300) + Bold (700).
+   =========================================== */
+
+@font-face {
+  font-family: "Uni Stuttgart Sans";
+  src: url("fonts/Uni-Stuttgart-Sans-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Uni Stuttgart Sans";
+  src: url("fonts/Uni-Stuttgart-Sans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ===========================================
+   TOKENS — University of Stuttgart corporate design
+   =========================================== */
+
+:root {
+  --blue: #004191;      /* Mittelblau — headings, dividers, rules */
+  --cyan: #00BEFF;      /* Hellblau — accent, active state */
+  --ink: #323232;       /* Anthracite — body text */
+  --go: #59B200;        /* hands-on only */
+  --paper: #ffffff;
+  --tint: #eff3f8;      /* card fill */
+  --rule: #cfdae6;
+  --muted: #6e7c8a;
+  --term: #10161c;      /* terminal ground */
+
+  --body-font: "Uni Stuttgart Sans", Arial, Helvetica, sans-serif;
+  --mono-font: "JetBrains Mono", "SF Mono", Consolas, monospace;
+
+  --base-font-size: 32px;
+  --text-size: 19pt;
+  --h1-size: 44pt;
+  --h2-size: 34pt;
+  --h3-size: 21pt;
+  --eyebrow-size: 12pt;
+
+  --slide-pad: 58px;
+  --slide-pad-top: 38px;
+}
+
+/* ===========================================
+   BASE
+   =========================================== */
+
+.reveal {
+  font-family: var(--body-font);
+  font-size: var(--base-font-size);
+  font-weight: 300;
+}
+
+.reveal-viewport {
+  background-color: var(--paper);
+}
+
+.reveal strong,
+.reveal b {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4 {
+  font-family: var(--body-font);
+  text-transform: none;
+  color: var(--blue);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.reveal h1 { font-size: var(--h1-size); }
+.reveal h2 { font-size: var(--h2-size); margin: 0; }
+.reveal h3 { font-size: var(--h3-size); font-weight: 700; letter-spacing: 0; }
+
+.reveal p,
+.reveal li,
+.reveal td,
+.reveal th,
+.reveal blockquote {
+  font-size: var(--text-size);
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+.reveal a {
+  color: var(--blue);
+  text-decoration: none;
+  border-bottom: 1px solid var(--cyan);
+}
+
+/* ===========================================
+   SLIDE FRAME
+   =========================================== */
+
+.reveal .slides section {
+  height: 100%;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: var(--slide-pad-top) var(--slide-pad) var(--slide-pad) var(--slide-pad) !important;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.reveal .slides section.stack { padding: 0 !important; }
+
+/* Eyebrow: which section of the workshop we are in */
+.reveal .eyebrow {
+  font-size: var(--eyebrow-size) !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  margin: 0 0 10px 0;
+  flex-shrink: 0;
+}
+
+.reveal .slides section > h2 {
+  flex-shrink: 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--blue);
+}
+
+/* Content is vertically centred in the space under the title, so short slides
+   read as composed. An auto top margin (.push, .done) pins to the bottom. */
+.reveal .slides section > .content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 20px;
+  min-height: 0;
+}
+
+/* Keep prose to a readable measure — full-width text at 19pt is 95
+   characters a line. Code, terminals and the done-bar stay full width. */
+.reveal .content > p:not(.term):not(.done),
+.reveal .content > blockquote,
+.reveal .content > ul,
+.reveal .content > ol,
+.reveal .content > dl {
+  max-width: 950px;
+}
+
+.reveal .footnote {
+  position: absolute;
+  bottom: 16px;
+  left: var(--slide-pad);
+  right: var(--slide-pad);
+  font-size: 10pt !important;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ===========================================
+   LISTS
+   =========================================== */
+
+.reveal ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 4px 0;
+}
+
+.reveal ul li {
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 16px;
+}
+
+.reveal ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 8px;
+  height: 8px;
+  background: var(--cyan);
+  border-radius: 50%;
+}
+
+.reveal ol { margin: 4px 0 4px 24px; }
+.reveal ol li { margin-bottom: 16px; }
+
+.reveal blockquote p { font-size: inherit; }
+
+.reveal blockquote {
+  border: none;
+  border-left: 3px solid var(--cyan);
+  background: none;
+  box-shadow: none;
+  width: 100%;
+  max-width: none;
+  padding: 2px 0 2px 20px;
+  margin: 16px 0;
+  font-style: normal;
+  color: var(--muted);
+}
+
+/* ===========================================
+   TITLE SLIDE
+   =========================================== */
+
+.reveal .slides section.title-slide {
+  justify-content: center !important;
+}
+
+.reveal .title-slide h1 {
+  font-size: 58pt;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.reveal .title-slide .lede {
+  font-size: 24pt !important;
+  color: var(--ink);
+  margin: 18px 0 0 0;
+  max-width: 78%;
+}
+
+.reveal .title-slide .credits {
+  font-size: 14pt !important;
+  color: var(--muted);
+  margin-top: 46px;
+  line-height: 1.6;
+}
+
+.reveal .title-slide .brandmark {
+  position: absolute;
+  top: var(--slide-pad-top);
+  right: var(--slide-pad);
+  width: 96px;
+  height: 96px;
+}
+
+.reveal .cyan-rule {
+  width: 120px;
+  height: 6px;
+  background: var(--cyan);
+  margin: 0 0 26px 0;
+}
+
+/* ===========================================
+   SECTION DIVIDERS — Mittelblau flood
+   =========================================== */
+
+.reveal-viewport.is-divider .slide-background.present {
+  background-color: var(--blue) !important;
+}
+
+.reveal .slides section.section-divider {
+  justify-content: center !important;
+  overflow: hidden;   /* clips the bled section numeral at the slide edge */
+}
+
+/* The section number is a watermark, not a label: oversized,
+   bled off the bottom-right corner, in Hellblau at low opacity. */
+.reveal .section-divider .sec-num {
+  position: absolute;
+  right: 40px;
+  bottom: -78px;
+  font-size: 290pt !important;
+  font-weight: 300;
+  color: rgba(0, 190, 255, 0.17);
+  line-height: 1;
+  margin: 0;
+  letter-spacing: -0.04em;
+  pointer-events: none;
+}
+
+.reveal .section-divider h1 {
+  color: #fff;
+  font-size: 52pt;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.reveal .section-divider p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 20pt !important;
+  margin: 16px 0 0 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===========================================
+   HANDS-ON SLIDES — green spine, unmistakable
+   =========================================== */
+
+.reveal .slides section.task {
+  border-left: 12px solid var(--go);
+  padding-left: calc(var(--slide-pad) - 12px) !important;
+}
+
+.reveal .task h2 {
+  color: var(--ink);
+  border-bottom-color: var(--go);
+}
+
+.reveal .task .eyebrow { color: var(--go); }
+
+.reveal .task ul li::before { background: var(--go); }
+
+.reveal .chip {
+  display: inline-block;
+  font-size: 11pt !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #fff;
+  background: var(--go);
+  padding: 4px 12px 3px 12px;
+  border-radius: 3px;
+}
+
+.reveal .task-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+/* "Done when" contract, pinned to the bottom of every hands-on slide */
+.reveal .done {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 14px 18px;
+  background: rgba(89, 178, 0, 0.1);
+  border-left: 3px solid var(--go);
+  font-size: 16pt !important;
+}
+
+.reveal .done .done-label {
+  font-weight: 700;
+  color: #3f7d00;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 12pt;
+  margin-right: 10px;
+}
+
+/* ===========================================
+   PHASE RAIL — the deck's signature.
+   Five dots echoing the ICP logo's particles.
+   Used only where it carries information:
+   the agent loop (§0) and the §5 workflow.
+   =========================================== */
+
+.reveal .rail {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex-shrink: 0;
+}
+
+.reveal .rail::before {
+  content: '';
+  position: absolute;
+  top: 7px;
+  left: 6%;
+  right: 6%;
+  height: 2px;
+  background: var(--rule);
+}
+
+.reveal .rail li {
+  position: relative;
+  flex: 1;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+  font-size: 13pt !important;
+  color: var(--muted);
+  z-index: 1;
+}
+
+.reveal .rail li::before {
+  position: static;
+  display: block;
+  content: '';
+  width: 16px;
+  height: 16px;
+  margin: 0 auto 12px auto;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--rule);
+}
+
+.reveal .rail li.is-active {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.reveal .rail li.is-active::before {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 5px rgba(0, 190, 255, 0.22);
+}
+
+.reveal .rail li.is-done::before {
+  background: var(--rule);
+  border-color: var(--rule);
+}
+
+.reveal .rail-loopback {
+  display: block;
+  width: 100%;
+  height: 46px;
+  margin-top: -4px;
+}
+
+.reveal .rail-loopback path { fill: none; stroke: var(--cyan); stroke-width: 2; }
+.reveal .rail-loopback polygon { fill: var(--cyan); }
+.reveal .rail-loopback text {
+  fill: var(--muted);
+  font-family: var(--body-font);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ===========================================
+   CODE
+   =========================================== */
+
+.reveal code {
+  font-family: var(--mono-font);
+  font-size: 0.86em;
+  background: var(--tint);
+  color: var(--blue);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+/* Code inside a heading inherits the heading colour */
+.reveal h1 code,
+.reveal h2 code,
+.reveal h3 code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+.reveal pre {
+  width: 100%;
+  margin: 14px 0;
+  box-shadow: none;
+  font-size: 15pt;
+  background: var(--term);
+  border-radius: 5px;
+}
+
+.reveal pre code {
+  font-family: var(--mono-font);
+  background: transparent;
+  color: #e8eef4;
+  padding: 20px 24px;
+  border-radius: 5px;
+  max-height: none;
+  font-size: 1em;
+  line-height: 1.55;
+  overflow: visible;
+}
+
+/* Terminal / transcript block written by hand */
+.reveal .term {
+  background: var(--term);
+  border-radius: 5px;
+  padding: 20px 24px;
+  font-family: var(--mono-font);
+  font-size: 13pt !important;
+  line-height: 1.7;
+  color: #e8eef4;
+  margin: 0;
+}
+
+.reveal .term .p { color: var(--cyan); }
+.reveal .term .c { color: #7e8c9a; }
+.reveal .term .ok { color: #86d633; }
+.reveal .term .bad { color: #ff6b6b; }
+.reveal .term .add { color: #86d633; }
+.reveal .term .del { color: #ff6b6b; }
+
+/* ===========================================
+   CARDS & TABLES
+   =========================================== */
+
+.reveal .card {
+  background: var(--tint);
+  border-left: 3px solid var(--blue);
+  border-radius: 0 5px 5px 0;
+  padding: 16px 20px;
+}
+
+.reveal .card h3 {
+  margin: 0 0 6px 0;
+  font-size: 16pt;
+  color: var(--blue);
+}
+
+.reveal .card p {
+  margin: 0;
+  font-size: 15pt !important;
+}
+
+.reveal .card.accent { border-left-color: var(--cyan); }
+.reveal .card.go { border-left-color: var(--go); background: rgba(89, 178, 0, 0.08); }
+.reveal .card.plain { background: none; border-left-color: var(--rule); }
+
+/* pattern → fix pairs (§6) */
+.reveal .fix {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 0;
+  border-top: 1px solid var(--rule);
+  padding: 17px 0;
+  align-items: baseline;
+  max-width: 1000px;
+}
+
+.reveal .fix:last-child { border-bottom: 1px solid var(--rule); }
+.reveal .fix p { margin: 0; font-size: 18pt !important; }
+.reveal .fix .pat { font-weight: 700; color: var(--ink); padding-right: 20px; }
+.reveal .fix .rem { color: var(--blue); }
+.reveal .fix .rem code { background: none; padding-left: 0; }
+
+/* key/value rows for the cheat sheet */
+.reveal .kv {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 4px 16px;
+  align-items: baseline;
+}
+
+.reveal .kv dt {
+  font-family: var(--mono-font);
+  font-size: 13pt;
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.reveal .kv dd {
+  margin: 0;
+  font-size: 14pt;
+  color: var(--ink);
+}
+
+.reveal table { width: 100%; border-collapse: collapse; margin: 0; }
+
+.reveal th {
+  text-align: left;
+  font-size: 11pt !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  border-bottom: 2px solid var(--blue);
+  padding: 0 14px 8px 0;
+}
+
+.reveal td {
+  padding: 14px 14px 14px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 17pt !important;
+}
+
+/* ===========================================
+   UTILITIES
+   =========================================== */
+
+.text-lg { font-size: 19pt !important; }
+.text-xl { font-size: 22pt !important; }
+.text-2xl { font-size: 26pt !important; }
+.text-3xl { font-size: 32pt !important; }
+.muted { color: var(--muted) !important; }
+.center { text-align: center !important; }
+.blue { color: var(--blue) !important; }
+.cyan { color: var(--cyan) !important; }
+.go { color: #3f7d00 !important; }
+.bold { font-weight: 700; }
+.tick { font-family: system-ui, sans-serif; }
+.push { margin-top: auto !important; }
+
+/* the loop, set as a line of type */
+.reveal .loop-line {
+  font-size: 32pt !important;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.reveal .loop-line .arrow { color: var(--cyan); font-weight: 300; }
+
+.reveal .progress { color: var(--cyan); }
+.reveal .controls { color: var(--blue); }
+.reveal .slide-number { background: none; color: var(--muted); font-size: 11pt; }
+.reveal-viewport.is-divider .slide-number { color: rgba(255, 255, 255, 0.5); }
