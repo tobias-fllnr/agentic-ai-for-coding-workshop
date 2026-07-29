@@ -91,7 +91,10 @@ Teaser / pointers only:
 - `Repository/` — the practice repository participants work in during the workshop.
   Domain-light generic numerics (e.g. a small numerical routine / integrator), a feature
   to add (e.g. an extra term + a plotting script), and **a few intentionally planted
-  bugs** for a debugging exercise. Must be `uv`-managed.
+  bugs** for a debugging exercise. Must be `uv`-managed. **Now a git submodule** pointing
+  at the standalone `odelab` repo (the single source of truth); clone the full repo with
+  `--recurse-submodules`, and update it by editing/pushing in `odelab` then bumping the
+  pinned commit here (see `README.md`).
 - `slides/` — the reveal.js deck as delivered (`index.html`, `styles.css`, self-hosted
   `fonts/`), with speaker notes on every slide.
 - `Presentation/` — the concrete session plan and talking points for delivering the
