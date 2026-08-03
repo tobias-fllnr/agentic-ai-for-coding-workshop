@@ -61,17 +61,19 @@ Core (input + hands-on):
   conventions for a given topic).
 - Permissions / safety modes.
 - The understand → plan → TDD → review cycle (the backbone exercise).
-- Working in **small, targeted, reviewable PRs** — don't let Claude run free; you won't
-  meaningfully review a 1000-line PR.
+- Working in **small, targeted, reviewable diffs** — don't let Claude run free; you won't
+  meaningfully review a 1000-line change. In-session the branch lands via a local
+  `git merge --no-ff`; PRs are the same discipline with a remote, and stay a §7 pointer.
 - **Task triage** — agents excel at small, well-specified tasks and fail on tasks needing
   architectural decisions; teach participants to recognize when *not* to delegate.
 - **Common failure patterns** — adopt Anthropic's five named pitfalls: kitchen-sink
   session → `/clear` between tasks; over-correcting → after two failed tries `/clear` and
   reprompt; over-specified CLAUDE.md → prune; trust-then-verify gap → always give a
   verifiable check; infinite exploration → scope narrowly or use subagents.
-- ⚠️ **Models & reasoning effort** — NOT found in any existing curriculum. Keep only if we
-  justify it as our own differentiator; otherwise fold into a broader "controlling the
-  agent" segment or trim. Decide during planning.
+- **Models & reasoning effort** — one box on the §2 "Claude Code in 60 seconds" slide, plus
+  a tip on §3's first hands-on: **Sonnet at `medium` effort** is the workshop setting
+  (`claude --model sonnet --effort medium`). Frame the cost as *waiting time*, not abstract
+  quality — on high effort the hands-on segments become a waiting room.
 
 Real demo, time permitting (not a throwaway mention):
 - **Subagents, hooks, MCP / memory** — Anthropic's own beginner courses treat these as
@@ -91,8 +93,11 @@ Teaser / pointers only:
 - `Repository/` — the practice repository participants work in during the workshop.
   Domain-light generic numerics (e.g. a small numerical routine / integrator), a feature
   to add (e.g. an extra term + a plotting script), and **a few intentionally planted
-  bugs** for a debugging exercise. Must be `uv`-managed. **Now a git submodule** pointing
-  at the standalone `odelab` repo (the single source of truth); clone the full repo with
+  bugs** for a debugging exercise. Must be `uv`-managed. Its own `CLAUDE.md` is teaching
+  material — we show it in §3 as the model of a good, short project memory, which is why
+  participants do **not** run `/init` (it would only offer to tidy that file).
+  **Now a git submodule** pointing at the standalone `odelab` repo (the single source of
+  truth); clone the full repo with
   `--recurse-submodules`, and update it by editing/pushing in `odelab` then bumping the
   pinned commit here (see `README.md`).
 - `slides/` — the reveal.js deck as delivered (`index.html`, `styles.css`, self-hosted
@@ -110,14 +115,19 @@ Teaser / pointers only:
 
 ## Open items (resolve before finalizing)
 
-- Realistic per-segment timing for a 2h session — unproven; needs a dry run. The deck is
-  42 slides, ~19 of them hands-on or divider slides.
-- **Models & reasoning effort** — resolved: folded into §4 as one card on the
-  permissions slide ("Reasoning effort").
+- Realistic per-segment timing for a 2h session — a first solo read-through (Aug 2026)
+  suggests the timing works, but it has not been run with participants. The deck is
+  53 slides: 8 hands-on, 10 dividers.
+- **Models & reasoning effort** — resolved: one card on the §2 interface slide (moved off
+  the §4 permissions slide, so it arrives before their first session), plus the
+  Sonnet/`medium` tip on the §3 hands-on.
 - **Scientific-computing angle** — numerical correctness, reproducibility, HPC/SLURM,
   notebooks are uncovered by other workshops. Decide how much to own this; it pairs
   naturally with the `uv` module (reproducibility) and TDD (numerical/property tests as
   the verifiable check).
-- GitHub flow specifics: fork-per-participant vs shared org repo, and where PRs target
-  (affects the GH Actions auto-review teaser).
+- **GitHub flow** — resolved after the first dry run: forking is **recommended but
+  optional** (stated on the §0 hands-on slide, along with `git remote show origin` and
+  `uv cache dir` as pre-flight checks), and §5 Phase 5 ends in a **local
+  `git merge --no-ff`**. `gh` is not installed on the ICP machines, so it and PRs are one
+  bullet in §7 "Worth a look next" beside the GH Actions auto-review teaser.
 - Confirm the pre-workshop setup email contents and send date with organizers.

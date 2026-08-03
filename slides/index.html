@@ -27,7 +27,7 @@
     Söllerhaus Workshop &middot; 2026
   </p>
   <aside class="notes">
-    Welcome. Today you go from zero Claude Code experience to shipping a small, tested, reviewed PR — using a disciplined workflow you can take straight back to your own research code.
+    Welcome. Today you go from zero Claude Code experience to shipping a small, tested, reviewed change — using a disciplined workflow you can take straight back to your own research code.
   </aside>
 </section>
 
@@ -35,7 +35,7 @@
   <p class="eyebrow">Why you are here</p>
   <h2>The promise</h2>
   <div class="content">
-    <p class="text-xl">By the end you will have <strong>shipped a small, tested, reviewed pull request</strong> with Claude Code &mdash; using a workflow you can reuse on your own research code.</p>
+    <p class="text-xl">By the end you will have <strong>shipped a small, tested, reviewed change</strong> with Claude Code &mdash; using a workflow you can reuse on your own research code.</p>
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
       <div class="card plain">
         <h3>Assumes</h3>
@@ -70,7 +70,7 @@
         <tr><td class="blue bold">3</td><td>Understand the repo</td><td class="muted">Hands-on</td></tr>
         <tr><td class="blue bold">4</td><td>Steering the agent</td><td class="muted">Hands-on</td></tr>
         <tr><td class="muted bold">☕</td><td class="muted">Break</td><td class="muted">5 min</td></tr>
-        <tr><td class="blue bold">5</td><td><strong>Ship a feature: plan → TDD → review → PR</strong></td><td class="muted">The main event</td></tr>
+        <tr><td class="blue bold">5</td><td><strong>Ship a feature: plan → TDD → review → merge</strong></td><td class="muted">The main event</td></tr>
         <tr><td class="blue bold">6&ndash;7</td><td>Pitfalls &middot; advanced demo &middot; wrap</td><td class="muted">Input &middot; demo</td></tr>
       </tbody>
     </table>
@@ -180,6 +180,7 @@ export UV_CACHE_DIR=/data/$USER/uv-cache
   </div>
   <h2>Get the repo running</h2>
   <div class="content">
+    <p class="text-lg" style="margin-bottom: 10px;"><strong>Fork first</strong> &mdash; recommended, so you can push today&rsquo;s work and open a PR afterwards. A plain clone of the upstream repo works for everything we do here.</p>
     <pre><code data-trim data-noescape class="language-bash">
 git clone https://github.com/&lt;your-user&gt;/odelab.git
 cd odelab
@@ -191,7 +192,7 @@ uv add matplotlib                # you will plot later
     <p class="done push"><span class="done-label">Done when</span>the tests are green and the decay script prints a result.</p>
   </div>
   <aside class="notes">
-    Circulate. Most common snags: cloning the upstream repo rather than their own fork, and running uv from the wrong directory — it needs to see pyproject.toml. Everyone must hit green before we move on; the whole of §5 depends on a working test command. If anyone sees the hardlink warning here, that is the previous slide made real.
+    These are the checks from the setup email, so most of the room should be green in two minutes — the rest of the five is for the stragglers, and whoever already has the cache right can help their neighbour. Circulate. Most common snags: cloning the upstream repo rather than their own fork, and running uv from the wrong directory — it needs to see pyproject.toml. Everyone must hit green before we move on; the whole of §5 depends on a working test command. If anyone sees the hardlink warning here, that is the previous slide made real.
   </aside>
 </section>
 
@@ -348,10 +349,14 @@ uv add matplotlib                # you will plot later
       <dt>/clear</dt><dd>wipe the context and start the next task clean</dd>
       <dt>/permissions</dt><dd>see and change what it may do without asking</dd>
     </dl>
+    <div class="card" style="margin-top: 16px;">
+      <h3>Reasoning effort</h3>
+      <p><code>low · medium · high · xhigh · max</code>, defaulting to <code>high</code>. More effort buys quality on genuinely hard work and costs you minutes of watching it think.</p>
+    </div>
     <p class="footnote">Full reference: the cheat sheet at the end of this deck.</p>
   </div>
   <aside class="notes">
-    NEW slide, deliberately placed before the demo so absolute beginners can follow along. Show, don't just tell: open a terminal, run `claude`, press Shift+Tab twice so they see the mode indicator change, hit Esc once. 60 seconds, then move.
+    NEW slide, deliberately placed before the demo so absolute beginners can follow along. Show, don't just tell: open a terminal, run `claude`, press Shift+Tab twice so they see the mode indicator change, hit Esc once. 60 seconds, then move. The effort box moved here from §4 for one practical reason: they start their own first session in §3, and on high effort they will spend that segment watching a spinner. Say the recommendation out loud — sonnet, medium — and say why: nothing today is hard enough to need more.
   </aside>
 </section>
 
@@ -408,23 +413,24 @@ uv add matplotlib                # you will plot later
 
 <section id="init">
   <p class="eyebrow">§3 · Understand the repo</p>
-  <h2><code>/init</code> &mdash; write the map down</h2>
+  <h2>Write the map down + <code>CLAUDE.md</code></h2>
   <div class="content">
-    <p class="text-lg">Claude explores the repo and drafts a <code>CLAUDE.md</code>: build and test commands, layout, conventions it inferred.</p>
+    <p class="text-lg">A repo can carry its own briefing: build and test commands, layout, the conventions it expects. <code>odelab</code> ships one &mdash; <strong>read it</strong>, it is the shape to aim for.</p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 18px 0;">
       <div class="card">
         <h3>Plan mode</h3>
         <p>How <strong>you</strong> read the repo. Answers land in the conversation and leave with it.</p>
       </div>
       <div class="card">
-        <h3><code>/init</code></h3>
+        <h3><code>CLAUDE.md</code></h3>
         <p>How the <strong>repo</strong> remembers. One file, on disk, in git, loaded every session.</p>
       </div>
     </div>
-    <p class="text-lg">Read what it wrote and <strong>cut it down</strong> &mdash; a generated file is a first draft, and §4 is about pruning.</p>
+    <p class="text-lg">Starting a repo that has none? <code>/init</code> explores it and drafts one for you &mdash; then you <strong>cut it down</strong>, which is what §4 is about.</p>
+    <p class="footnote">We are not running <code>/init</code> today: <code>odelab</code> already has a <code>CLAUDE.md</code>, so it would only offer to tidy it.</p>
   </div>
   <aside class="notes">
-    Run /init live on odelab: ~30 seconds, 20-50 lines. Then open the result and delete half of it out loud — that lands the concision lesson before §4 even starts. Be explicit about the division of labour: /init bootstraps project memory, plan mode is how you understand code. People conflate them.
+    Be explicit about the division of labour: CLAUDE.md is how the repo remembers, plan mode is how you understand code. People conflate them. Open odelab's CLAUDE.md on screen and read two lines out loud — short, imperative, checkable — that lands the concision lesson before §4 even starts. Mention /init as the bootstrap for a repo with nothing, and say plainly that nobody needs to run it today; that saves twenty people generating a diff against a file we want to keep.
   </aside>
 </section>
 
@@ -433,18 +439,19 @@ uv add matplotlib                # you will plot later
     <p class="eyebrow">§3 · Understand the repo</p>
     <span class="chip">Your turn</span>
   </div>
-  <h2>Explain <code>odelab</code>, then <code>/init</code> it</h2>
+  <h2>Explain <code>odelab</code></h2>
   <div class="content">
-    <p class="text-lg" style="margin-bottom: 8px;">In <strong>plan mode</strong> (Shift+Tab), ask:</p>
+    <pre><code data-trim data-noescape class="language-bash">
+claude --model sonnet --effort medium
+    </code></pre>
+    <p class="text-lg" style="margin: 12px 0 0 0;"><strong>Sonnet on <code>medium</code> is enough for everything today</strong> &mdash; anything more and you spend the hands-on segments watching it think.</p>
+    <p class="text-lg" style="margin: 14px 0 8px 0;">In <strong>plan mode</strong> (Shift+Tab), ask:</p>
     <blockquote style="border-left-color: #59B200; margin: 0 0 12px 0;">explain this repository &mdash; structure, what each module does, how to run it and the tests</blockquote>
     <blockquote style="border-left-color: #59B200; margin: 0 0 14px 0;">where would I add a new integration method, and what should I test?</blockquote>
-    <pre><code data-trim data-noescape class="language-bash">
-/init                 # then read the CLAUDE.md it wrote
-    </code></pre>
-    <p class="done push"><span class="done-label">Done when</span>you can describe the repo in one sentence and have read your generated <code>CLAUDE.md</code>.</p>
+    <p class="done push"><span class="done-label">Done when</span>you can describe the repo in one sentence, and you have read its <code>CLAUDE.md</code>.</p>
   </div>
   <aside class="notes">
-    The point is the habit, the repo is small enough to read by hand. Let two or three people share what Claude told them — especially anything it got wrong. odelab already ships a CLAUDE.md; /init will offer to improve it rather than overwrite, which is itself worth pointing out.
+    Put the model line on the board before they start — sonnet, medium — and repeat the reason: on high effort this segment becomes a waiting room. The point is the habit, the repo is small enough to read by hand. Let two or three people share what Claude told them — especially anything it got wrong. Have them open odelab's CLAUDE.md at the end and compare it against what Claude just told them: the file is the short version of the same map.
   </aside>
 </section>
 
@@ -485,7 +492,7 @@ uv add matplotlib                # you will plot later
     <p class="footnote"><code>/memory</code> lists and opens all of them; the file closest to your working directory has the last word.</p>
   </div>
   <aside class="notes">
-    This excerpt is the instructor's actual user memory, which is why it reads like a person rather than a style guide. Two lines to point at: "new features must start in a branch" and the PR label rule — both come back in §5, so the audience sees a rule turn into behaviour within the hour. Every line is imperative and checkable; none of them explain what git is. That is the register to aim for. Mention auto memory because they will see "Saved 2 memories" in the transcript and ask: Claude keeps its own notes per project under ~/.claude/projects/, loaded every session, and you can switch it off in /memory. The useful distinction is authorship — you write instructions, it writes observations.
+    This excerpt is the instructor's actual user memory, which is why it reads like a person rather than a style guide. The line to point at is "new features must start in a branch" — it comes back in §5, so the audience sees a rule turn into behaviour within the hour. The label rule is a house convention for working PRs with an agent; we do not use it today, so name it in half a sentence and move on. Every line is imperative and checkable; none of them explain what git is. That is the register to aim for. Mention auto memory because they will see "Saved 2 memories" in the transcript and ask: Claude keeps its own notes per project under ~/.claude/projects/, loaded every session, and you can switch it off in /memory. The useful distinction is authorship — you write instructions, it writes observations.
   </aside>
 </section>
 
@@ -534,22 +541,20 @@ Label every axis with units. Save to figures/ as PDF.
 
 <section id="permissions">
   <p class="eyebrow">§4 · Steering the agent</p>
-  <h2>Permissions &amp; how hard it thinks</h2>
+  <h2>Permissions</h2>
   <div class="content">
-    <dl class="kv" style="grid-template-columns: 250px 1fr;">
+    <p class="text-lg">Three modes, cycled with <strong>Shift+Tab</strong> &mdash; plus an allowlist for the commands you are tired of approving.</p>
+    <dl class="kv" style="grid-template-columns: 250px 1fr; margin-top: 18px;">
       <dt>Plan</dt><dd>reads only. Explore anything, change nothing.</dd>
       <dt>Manual</dt><dd>the default &mdash; asks before each edit and command.</dd>
       <dt>Edit automatically</dt><dd>edits freely, still asks for commands. Fast, wants a clean git tree.</dd>
       <dt>/permissions</dt><dd>the allowlist &mdash; grant <code>Bash(uv run pytest)</code> once, stop being asked.</dd>
     </dl>
-    <div class="card" style="margin-top: 18px;">
-      <h3>Reasoning effort</h3>
-      <p><code>low · medium · high · xhigh · max</code>, defaulting to <code>high</code>. Reach for <code>low</code> and <code>medium</code> wherever the quality holds; step up for genuinely hard agentic work.</p>
-    </div>
+    <blockquote style="margin: 22px 0 0 0;">Your real protection is <strong>git</strong>, not the permission prompt. Commit before you let it run.</blockquote>
     <p class="footnote">Keep the agent on a leash you have consciously chosen &mdash; a dirty git tree is the one thing that makes a mistake expensive.</p>
   </div>
   <aside class="notes">
-    Split out from "More levers", with the model/effort question folded in as one card rather than its own module. Demo /permissions live. The safety message: your real protection is git, not the permission prompt.
+    Demo /permissions live. The safety message: your real protection is git, not the permission prompt. The reasoning-effort card that used to sit here now lives on the §2 interface slide, where it arrives before their first session rather than after it.
   </aside>
 </section>
 
@@ -868,15 +873,16 @@ git diff main...HEAD      # the whole branch, both commits
 
 <section id="phase-ship">
   <p class="eyebrow">§5 · Phase 5</p>
-  <h2>A small, targeted PR</h2>
+  <h2>Land it on <code>main</code></h2>
   <div class="content">
-    <p class="text-lg">The branch already exists and holds two commits. Push it and let <code>gh</code> open the PR from the terminal.</p>
+    <p class="text-lg">The branch exists, holds two commits, and you have read every line. Bring it home.</p>
     <pre><code data-trim data-noescape class="language-bash">
-git push -u origin add-rk4
-gh pr create --fill --label claude --label p2-medium --label effort-2-small
+git switch main
+git merge --no-ff add-rk4        # keep the branch visible in the history
+git log --oneline --graph
     </code></pre>
-    <p class="text-lg">Labels let Claude find its own work later: <code>gh pr list --label claude</code>, then <code>gh pr view</code> and <code>gh pr comment</code>.</p>
-    <p class="footnote">Install <code>gh</code>: <code>cli.github.com</code>, then <code>gh auth login</code> &middot; labels have to exist in the repo, so create them once with <code>gh label create claude</code>.</p>
+    <p class="text-lg"><strong>Small and targeted is the point</strong>, not the transport. Two commits you can read in a minute; nobody meaningfully reviews a thousand-line change &mdash; human or agent.</p>
+    <p class="footnote">Same discipline with a remote: push the branch and open a pull request, which is where CI and a second reader come in &mdash; see §7.</p>
     <div class="push">
       <ul class="rail">
         <li class="is-done">plan</li>
@@ -888,7 +894,7 @@ gh pr create --fill --label claude --label p2-medium --label effort-2-small
     </div>
   </div>
   <aside class="notes">
-    Adjust the remote flow to your GitHub setup (fork-per-person vs shared org repo) — confirm this before the session, and create the three labels in the target repo beforehand so nobody's gh pr create fails on a missing label. `gh auth login` is a prerequisite; check it in the setup email. Open the PR in the browser so they see CI run the tests. Priority and effort labels are a house convention worth explaining in one sentence: they make the backlog sortable and give an agent something to filter on.
+    Deliberately local: gh is not installed on the ICP machines and push credentials are one failure surface too many for twenty people at once. Nothing is lost — the reviewable-diff lesson is the durable part, and --no-ff keeps "tests, then implementation, on a branch" legible in the graph. Have them read their own git log --graph out loud. If anyone forked and wants the real thing, they can push and open the PR in the browser afterwards; point at §7 for gh and CI.
   </aside>
 </section>
 
@@ -897,21 +903,23 @@ gh pr create --fill --label claude --label p2-medium --label effort-2-small
     <p class="eyebrow">§5 · Phase 5</p>
     <span class="chip">Your turn</span>
   </div>
-  <h2>Open the PR</h2>
+  <h2>Merge it</h2>
   <div class="content">
-    <p class="text-lg">Push the branch and open a PR describing <strong>what &amp; why</strong> and <strong>how you tested it</strong>. Let Claude write the description and set the labels.</p>
+    <p class="text-lg">Ask Claude for the merge message first &mdash; <strong>what &amp; why</strong>, and <strong>how you tested it</strong>. That paragraph is what a reviewer, or you in six months, actually reads.</p>
     <pre><code data-trim data-noescape class="language-bash">
-git push -u origin add-rk4
-gh pr create --label claude --label p2-medium --label effort-2-small
+git switch main
+git merge --no-ff add-rk4
+uv run pytest                    # green on main
+git log --oneline --graph
     </code></pre>
     <div class="card go" style="margin-top: 14px;">
       <h3 class="go">Fast finishers</h3>
       <p>The plots and the logistic example misbehave. Hunt and fix the planted <strong>bugs</strong> &mdash; start with <code>scripts/plot_decay.py</code>.</p>
     </div>
-    <p class="done push"><span class="done-label">Done when</span>your PR is open, labelled, and CI is running the tests.</p>
+    <p class="done push"><span class="done-label">Done when</span><code>main</code> holds your feature, the tests are green, and the graph shows the branch.</p>
   </div>
   <aside class="notes">
-    Three planted bugs, answer key in instructor_notes.md: a sign error in the analytic overlay, an off-by-one in plot_error, and a wrong sign in rhs_logistic. The first one is the best teaching moment — the bug is in the reference, not the integrator.
+    Re-running pytest after the merge is the habit worth naming: green on the branch is not green on main. Three planted bugs for the fast finishers, answer key in instructor_notes.md: a sign error in the analytic overlay, an off-by-one in plot_error, and a wrong sign in rhs_logistic. The first one is the best teaching moment — the bug is in the reference, not the integrator.
   </aside>
 </section>
 
@@ -1063,13 +1071,14 @@ def job_status(job_id: str) -&gt; str:
         <ul>
           <li>GitHub Actions auto-review, in front of human review</li>
           <li><code>git worktree</code> for parallel agent work</li>
+          <li>The <code>gh</code> CLI &mdash; let Claude open, read and comment on PRs</li>
         </ul>
       </div>
     </div>
     <p class="footnote">Docs: <code>code.claude.com/docs</code> &middot; <code>research_agentic_coding_workshops.md</code> in this repo for the evidence base.</p>
   </div>
   <aside class="notes">
-    Point them at the research doc for further reading. The worktree teaser is deliberate: mention it, do not demo it — it is the natural next step once one agent is not enough.
+    Point them at the research doc for further reading. The worktree teaser is deliberate: mention it, do not demo it — it is the natural next step once one agent is not enough. Same for gh: it is not installed on the ICP machines, which is why §5 merged locally, but it is worth a sentence — `gh pr list --label claude`, then `gh pr view` and `gh pr comment`, is how an agent picks its own work back up tomorrow.
   </aside>
 </section>
 
@@ -1081,10 +1090,10 @@ def job_status(job_id: str) -&gt; str:
       <div>
         <h3 class="blue" style="margin-bottom: 10px;">Driving the agent</h3>
         <dl class="kv" style="grid-template-columns: 130px 1fr;">
-          <dt>claude</dt><dd>start, in the repo</dd>
+          <dt>claude</dt><dd>start, in the repo &mdash; <code>--model sonnet --effort medium</code></dd>
           <dt>Shift+Tab</dt><dd>plan / edit automatically / manual</dd>
           <dt>Esc</dt><dd>interrupt</dd>
-          <dt>/init</dt><dd>draft a <code>CLAUDE.md</code></dd>
+          <dt>/init</dt><dd>draft a <code>CLAUDE.md</code> for a repo with none</dd>
           <dt>/memory</dt><dd>open user or project memory</dd>
           <dt>/context</dt><dd>what is filling the window</dd>
           <dt>/clear</dt><dd>new task, clean context</dd>
@@ -1101,11 +1110,11 @@ def job_status(job_id: str) -&gt; str:
           <dt>test</dt><dd>red for the right reason, commit</dd>
           <dt>implement</dt><dd>green, commit again</dd>
           <dt>review</dt><dd>adversarial, then your own eyes</dd>
-          <dt>ship</dt><dd><code>gh pr create --label</code></dd>
+          <dt>ship</dt><dd><code>git merge --no-ff</code>, or a PR</dd>
         </dl>
       </div>
     </div>
-    <p class="footnote">Photograph this slide. &nbsp;Install <code>uv</code>: <code>docs.astral.sh/uv/getting-started/installation</code> &middot; install <code>gh</code>: <code>cli.github.com</code></p>
+    <p class="footnote">Photograph this slide. &nbsp;Install <code>uv</code>: <code>docs.astral.sh/uv/getting-started/installation</code> &middot; docs: <code>code.claude.com/docs</code></p>
   </div>
   <aside class="notes">
     NEW slide — the takeaway artifact. Pause here and let people actually photograph it; it is the one slide they will use tomorrow.
