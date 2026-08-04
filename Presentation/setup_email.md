@@ -1,13 +1,13 @@
 # Pre-workshop setup email
 
-Send to everyone attending the retreat. Replace `<SLIDES LINK>` once the deck is online.
+Send to everyone attending the retreat. 
 
 To send it with the formatting intact: `python3 Presentation/email_to_html.py`, then paste
 `setup_email.html` into a Thunderbird compose window via *Insert → HTML*.
 
 ---
 
-**Subject:** Agentic AI for Coding — 5 minutes of setup before the retreat
+**Subject:** Agentic AI for Coding Workshop — 5 minutes of setup before the retreat
 
 ---
 
@@ -70,7 +70,7 @@ claude
 Never used `uv` or Claude Code before? That is fine — the session assumes no prior
 experience and starts with `uv` from scratch. If something does not work, just ask Tobi.
 
-Already courious about the workshop? Check out the slides here: <SLIDES LINK>
+Already curious about the workshop? Check out the slides here: https://slides.pythonf.de/presentations/agentic-ai-for-coding-workshop/deck/index.html
 
 See you at the retreat!
 
