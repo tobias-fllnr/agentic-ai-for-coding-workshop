@@ -542,15 +542,15 @@ Label every axis with units. Save to figures/ as PDF.
   </div>
   <h2>Open the branch and plan RK4</h2>
   <div class="content">
+    <pre><code data-trim data-noescape class="language-bash">
+    git stash -u               # park your §4 experiments
+    git switch -c add-rk4
+    </code></pre>
     <blockquote class="prompt" style="margin: 0 0 14px 0;">In plan mode: plan adding an <code>rk4_step</code> to <code>odelab</code>, reusing the existing <code>integrate(..., method=...)</code> hook.</blockquote>
     <ul>
       <li>Add a note or two of your own</li>
       <li>Have it revise &mdash; <strong>without coding yet</strong></li>
     </ul>
-    <pre><code data-trim data-noescape class="language-bash">
-git stash -u               # park your §4 experiments
-git switch -c add-rk4
-    </code></pre>
     <p class="done push"><span class="done-label">Done when</span>you have a plan you would sign off on, on a fresh branch.</p>
   </div>
 </section>
@@ -735,8 +735,6 @@ git log --oneline --graph
     <div class="fix"><p class="pat">Over-specified <code>CLAUDE.md</code></p><p class="rem">Prune ruthlessly</p></div>
     <div class="fix"><p class="pat">Trust-then-verify gap</p><p class="rem">Always give a check. Cannot verify → do not ship</p></div>
     <div class="fix"><p class="pat">Infinite exploration</p><p class="rem">Scope narrowly, or delegate to a subagent</p></div>
-    <p class="footnote">Autonomous runs fail the same ways: <em>overexcitement</em> (declaring success on a failure), <em>implementation drift</em>, context degradation. Trehan &amp; Chopra, arXiv:2601.03315 &middot; taxonomy: Cemri et al., arXiv:2503.13657.</p>
-  </div>
 </section>
 
 <section id="context-window">
@@ -859,8 +857,6 @@ def job_status(job_id: str) -&gt; str:
         </ul>
       </div>
     </div>
-    <p class="footnote">Docs: <code>code.claude.com/docs</code> &middot; <code>research_agentic_coding_workshops.md</code> in this repo for the evidence base.</p>
-  </div>
 </section>
 
 <section id="cheatsheet">
@@ -871,7 +867,6 @@ def job_status(job_id: str) -&gt; str:
       <div>
         <h3 class="blue" style="margin-bottom: 10px;">Driving the agent</h3>
         <dl class="kv" style="grid-template-columns: 130px 1fr;">
-          <dt>claude</dt><dd><code>--model sonnet --effort medium</code></dd>
           <dt>Shift+Tab</dt><dd>plan / manual / edit automatically</dd>
           <dt>Esc</dt><dd>interrupt</dd>
           <dt>/init</dt><dd>draft a <code>CLAUDE.md</code> for a repo with none</dd>
@@ -895,8 +890,6 @@ def job_status(job_id: str) -&gt; str:
         </dl>
       </div>
     </div>
-    <p class="footnote">Photograph this slide. &nbsp;Install <code>uv</code>: <code>docs.astral.sh/uv/getting-started/installation</code> &middot; docs: <code>code.claude.com/docs</code></p>
-  </div>
 </section>
 
 <section id="closing" class="section-divider" data-state="is-divider">
