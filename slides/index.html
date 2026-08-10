@@ -26,17 +26,14 @@
     Institute for Computational Physics &middot; University of Stuttgart<br/>
     Söllerhaus Workshop &middot; 2026
   </p>
-  <aside class="notes">
-    Welcome. Today you go from zero Claude Code experience to shipping a small, tested, reviewed change — using a disciplined workflow you can take straight back to your own research code.
-  </aside>
 </section>
 
 <section id="promise">
   <p class="eyebrow">Why you are here</p>
   <h2>The promise</h2>
   <div class="content">
-    <p class="text-xl">By the end you will have <strong>shipped a small, tested, reviewed change</strong> with Claude Code.</p>
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+    <p class="text-xl">By the end you will have <strong>shipped a small, tested, reviewed change</strong>.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
       <div class="card plain">
         <h3>Assumes</h3>
         <p>Python and git. <strong>No</strong> prior Claude Code.</p>
@@ -47,9 +44,6 @@
       </div>
     </div>
   </div>
-  <aside class="notes">
-    Set expectations: mostly hands-on, interleaved — short input, then you drive. Reassure the beginners; nobody is expected to know Claude Code already.
-  </aside>
 </section>
 
 <section id="agenda">
@@ -71,9 +65,6 @@
       </tbody>
     </table>
   </div>
-  <aside class="notes">
-    The heart is §5 — 46 of the 110 active minutes. Everything else earns time for it. If we run late, we protect §5 and cut the extras.
-  </aside>
 </section>
 
 <!-- ============================================================
@@ -93,15 +84,11 @@
     <ul style="margin-top: 10px;">
       <li><strong>10&ndash;100× faster than pip</strong> &mdash; fast enough to rebuild an environment per job</li>
       <li>One tool where you had <code>pip</code>, <code>pip-tools</code>, <code>pipx</code>, <code>poetry</code>, <code>pyenv</code>, <code>virtualenv</code></li>
-      <li><code>uv.lock</code> &mdash; a universal lockfile: commit it, and everyone resolves the same versions</li>
+      <li><code>uv.lock</code> &mdash; same environment on every machine</li>
       <li>It installs <strong>Python interpreters</strong> too: <code>uv python install 3.12</code></li>
-      <li>A single static binary, and an ordinary <code>.venv</code> underneath &mdash; defaults to <code>$HOME</code>.</li>
     </ul>
-    <p class="footnote">Install: <code>docs.astral.sh/uv/getting-started/installation</code> &middot; speed figure is Astral&rsquo;s own benchmark, warm cache. Reproducibility for a paper: commit <code>pyproject.toml</code> <em>and</em> <code>uv.lock</code>.</p>
+    <p class="footnote">Install: <code>docs.astral.sh/uv/getting-started/installation</code> &middot; speed figure: Astral&rsquo;s benchmark, warm cache. For a paper, commit <code>pyproject.toml</code> <em>and</em> <code>uv.lock</code>.</p>
   </div>
-  <aside class="notes">
-    Keep it short — uv is the substrate, not the point. The reproducibility line is the one that lands with this audience: the lockfile is what makes "it worked on my machine" a checkable claim. For a plot script you email around, PEP 723 inline dependencies (`# /// script`) make it self-contained — mention it if there is time.
-  </aside>
 </section>
 
 <section id="uv-commands">
@@ -116,30 +103,24 @@ uv run pytest             # run inside the project environment
 uv run scripts/plot.py    # for a .py file, the word "python" is optional
 uvx ruff check .          # run a tool in a throwaway environment
     </code></pre>
-    <p class="text-lg">Six commands cover the day. Everything today runs through <code>uv run</code>.</p>
+    <p class="text-lg">Everything today runs through <code>uv run</code>.</p>
   </div>
-  <aside class="notes">
-    `uv run` syncs the environment first, so it is always up to date — that is why the agent can trust it as a check. `uv init` is the one they will use back at their desks on Monday; it also runs git init for you.
-  </aside>
 </section>
 
 <section id="uv-cache">
   <p class="eyebrow">§0 · uv</p>
-  <h2>UV cache on different filesystems</h2>
+  <h2>Keep the cache on the same filesystem</h2>
   <div class="content">
-    <p class="text-lg">Installing links a package out of one global cache into your <code>.venv</code> &mdash; copy-on-write <strong>clone</strong> on macOS and Linux, <strong>hardlink</strong> on Windows. Both need the cache and the venv on the <strong>same filesystem</strong>.</p>
+    <p class="text-lg">Installing <strong>links</strong> a package out of one global cache into your <code>.venv</code> &mdash; and a link cannot cross filesystems.</p>
     <p class="term" style="margin: 14px 0;"><span class="bad">warning: Failed to hardlink files; falling back to full copy.</span><br/>
       <span class="c">This may lead to degraded performance.</span></p>
-    <p class="text-lg" style="margin-bottom: 10px;">Cache in <code>$HOME</code>, project on <code>/data</code> will let uv copy all files. Better give each mount its own cache, e.g. with <code>direnv</code>:</p>
+    <p class="text-lg" style="margin-bottom: 10px;">Cache in <code>$HOME</code>, project on <code>/data</code> &mdash; uv copies every file. Give each mount its own cache with <code>direnv</code>:</p>
     <pre><code data-trim data-noescape class="language-bash">
 # /data/&lt;user&gt;/.envrc          → and the same under /work, /tikhome
 export UV_CACHE_DIR=/data/$USER/uv-cache
     </code></pre>
-    <p class="footnote">On a cluster, prefer the site Python where MPI and BLAS are tuned: <code>--no-managed-python</code>. Watch inode quotas &mdash; <code>UV_PROJECT_ENVIRONMENT</code> moves the venv to scratch.</p>
+    <p class="footnote">On a cluster, prefer the site Python where MPI and BLAS are tuned: <code>--no-managed-python</code>. If inodes are tight, <code>UV_PROJECT_ENVIRONMENT</code> moves the venv to scratch.</p>
   </div>
-  <aside class="notes">
-    This is the slide nobody else teaches. The mechanism: uv tries reflink (clone), falls back to hardlink, then to a full copy — and only the copy fallback warns. Links cannot cross filesystems, so a home-directory cache plus an NFS project directory silently costs you the entire speed and disk-dedup benefit. Astral's docs put it plainly: the cache directory should live on the same filesystem as the environment. Setting UV_LINK_MODE=copy only silences the warning; co-locating the cache is the actual fix. The NFS-per-mount direnv recipe is our own guidance, the docs do not cover HPC.
-  </aside>
 </section>
 
 <section id="task-uv" class="task">
@@ -150,18 +131,16 @@ export UV_CACHE_DIR=/data/$USER/uv-cache
   <h2>Get the repo running</h2>
   <div class="content">
     <pre><code data-trim data-noescape class="language-bash">
-git clone https://github.com/&lt;your-user&gt;/odelab.git
+git clone https://github.com/&lt;your-user&gt;/odelab.git   # fork optional
 cd odelab
 uv sync
-uv run pytest                    # 4 tests pass — your green baseline
+uv run pytest                # 4 tests pass — your green baseline
 uv run scripts/run_decay.py
-uv add matplotlib                # you will plot later
+git remote show origin       # where would you push?
+uv cache dir                 # same filesystem as the repo?
     </code></pre>
     <p class="done push"><span class="done-label">Done when</span>the tests are green and the decay script prints a result.</p>
   </div>
-  <aside class="notes">
-    These are the checks from the setup email, so most of the room should be green in two minutes — the rest of the five is for the stragglers, and whoever already has the cache right can help their neighbour. Circulate. Most common snags: cloning the upstream repo rather than their own fork, and running uv from the wrong directory — it needs to see pyproject.toml. Everyone must hit green before we move on; the whole of §5 depends on a working test command. If anyone sees the hardlink warning here, that is the previous slide made real.
-  </aside>
 </section>
 
 <!-- ============================================================
@@ -176,10 +155,10 @@ uv add matplotlib                # you will plot later
   <p class="eyebrow">§1 · The agent loop</p>
   <h2>What makes it &ldquo;agentic&rdquo;?</h2>
   <div class="content">
-    <p class="text-lg">The model gets <strong>tools</strong>, and <strong>acts in a loop</strong>.</p>
+    <p class="text-lg">You set the <strong>goal</strong>. The model <strong>plans</strong>, then runs its own loop:</p>
     <ul style="margin-top: 4px;">
       <li><strong>act</strong> &mdash; read and write files, run commands, run tests</li>
-      <li><strong>observe</strong> &mdash; read the output: errors, test results, diffs</li>
+      <li><strong>observe</strong> &mdash; errors, test results, diffs</li>
       <li><strong>revise</strong> &mdash; adjust and go again, until the goal is met</li>
     </ul>
     <div class="push">
@@ -196,16 +175,13 @@ uv add matplotlib                # you will plot later
       </svg>
     </div>
   </div>
-  <aside class="notes">
-    Introduce the loop BY NAME; we refer back to it all day. The agent isn't magic — it's this loop, plus your tools and your steering. Point at the rail: you will see it again in §5, where the same five beats become plan, test, implement, review, ship.
-  </aside>
 </section>
 
 <section id="divergence">
   <p class="eyebrow">§1 · The agent loop</p>
   <h2>The one skill: find the divergence</h2>
   <div class="content">
-    <p class="text-lg">You say what you want built. The agent forms its own plan. <strong>Your job is to find where that plan and your intent come apart</strong> &mdash; and to decide, early, which gaps matter.</p>
+    <p class="text-lg">You say what you want built. The agent forms its own plan. <strong>Your job is to find where the two come apart</strong> &mdash; and which gaps matter.</p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 18px 0;">
       <div class="card go">
         <h3>It reaches for <code>pytest</code>; you write <code>unittest</code></h3>
@@ -216,34 +192,28 @@ uv add matplotlib                # you will plot later
         <p>Different science.<span class="verdict">Catch it in the plan, before any code.</span></p>
       </div>
     </div>
-    <p class="text-lg">Give the agent as much freedom as you are comfortable with. Spend your attention on the divergences that <strong>change the result</strong>.</p>
-    <p class="footnote">Autonomous runs name this failure <em>implementation drift under execution pressure</em> &mdash; the agent quietly substitutes an approach it finds easier. Trehan &amp; Chopra, arXiv:2601.03315 (2026).</p>
+    <p class="text-lg">Spend your attention on the divergences that <strong>change the result</strong>.</p>
+    <p class="footnote">Autonomous runs call this <em>implementation drift</em>: the agent quietly substitutes an approach it finds easier. Trehan &amp; Chopra, arXiv:2601.03315 (2026).</p>
   </div>
-  <aside class="notes">
-    This is the thesis of the whole session — say it slowly and come back to it. Two failure directions: over-steering (you dictate every line and gain nothing) and under-steering (you accept a plan that answers a different question). The craft is telling those apart, and the cheapest place to do it is the plan, which is exactly why §5 Phase 1 has you read and annotate one. The cited paper found implementation drift in three of four autonomous research attempts — with a human reading the plan, it is catchable in a minute.
-  </aside>
 </section>
 
 <section id="triage">
   <p class="eyebrow">§1 · The agent loop</p>
   <h2>When to delegate</h2>
   <div class="content">
-    <p class="text-lg">Agents shine on <strong>small, well-specified</strong> tasks. They struggle where <strong>architectural judgement</strong> is needed.</p>
+    <p class="text-lg">Agents shine on <strong>small, well-specified</strong> tasks. They can struggle where <strong>architectural judgement</strong> is needed.</p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-top: 14px;">
       <div class="card go">
         <h3 class="go"><span class="tick">✓</span> Delegate</h3>
         <p>&ldquo;Add an RK4 step and test its convergence order.&rdquo;</p>
       </div>
-      <div class="card plain" style="border-left-color: #d90000;">
-        <h3 style="color: #a30000;"><span class="tick">✗</span> Decide yourself</h3>
+      <div class="card stop">
+        <h3><span class="tick">✗</span> Decide yourself</h3>
         <p>&ldquo;Redesign how the solver handles stiff systems.&rdquo;</p>
       </div>
     </div>
-    <p class="text-lg" style="margin-bottom: 0;">Today&rsquo;s task is deliberately small &mdash; and that is the point.</p>
+    <p class="text-lg" style="margin-bottom: 0;">Today&rsquo;s task is deliberately small.</p>
   </div>
-  <aside class="notes">
-    Teach the triage instinct. Part of the skill is recognizing what NOT to hand off. Ask: what is the smallest piece of your own work that would pass the left-hand test?
-  </aside>
 </section>
 
 <!-- ============================================================
@@ -261,40 +231,35 @@ uv add matplotlib                # you will plot later
   <div class="content">
     <dl class="kv">
       <dt>claude</dt><dd>start a session in the current directory</dd>
-      <dt>Shift+Tab</dt><dd>cycle the mode: <strong>plan</strong> (reads only) → edit automatically → manual</dd>
-      <dt>Esc</dt><dd>interrupt &mdash; stop it mid-thought, no damage done</dd>
-      <dt>/clear</dt><dd>wipe the context and start the next task clean</dd>
-      <dt>/permissions</dt><dd>see and change what it may do without asking</dd>
+      <dt>Shift+Tab</dt><dd>cycle the permission mode; <strong>plan</strong> reads only</dd>
+      <dt>Esc</dt><dd>interrupt it mid-thought, no damage done</dd>
+      <dt>/clear</dt><dd>wipe the context for the next task</dd>
+      <dt>/permissions</dt><dd>what it may do without asking</dd>
     </dl>
     <div class="card" style="margin-top: 16px;">
       <h3>Reasoning effort</h3>
-      <p><code>low · medium · high · xhigh · max</code>, defaulting to <code>high</code>. Select reasoning effort based on the complexity of the task.</p>
+      <p><code>low · medium · high · xhigh · max</code>, default <code>high</code>. Match the reasoning effort based on the complexity of the task.</p>
     </div>
-    <p class="footnote">Full reference: the cheat sheet at the end of this deck.</p>
+    <p class="footnote">Full reference: the cheat sheet at the end.</p>
   </div>
-  <aside class="notes">
-    NEW slide, deliberately placed before the demo so absolute beginners can follow along. Show, don't just tell: open a terminal, run `claude`, press Shift+Tab twice so they see the mode indicator change, hit Esc once. 60 seconds, then move. The effort box moved here from §4 for one practical reason: they start their own first session in §3, and on high effort they will spend that segment watching a spinner. Say the recommendation out loud — sonnet, medium — and say why: nothing today is hard enough to need more.
-  </aside>
 </section>
 
 <section id="demo">
   <p class="eyebrow">§2 · Live demo</p>
   <h2>Watch the loop</h2>
   <div class="content">
-    <p class="text-lg">Plain script → a proper CLI, in real time.</p>
+    <p class="text-lg">Plain script → a proper CLI. An example of what you are about to see:</p>
     <p class="term" style="margin: 16px 0;"><span class="p">&gt;</span> turn scripts/run_decay.py into an argparse CLI with type hints and --help<br/>
       <span class="c">Reading scripts/run_decay.py…</span><br/>
       <span class="c">Editing scripts/run_decay.py…</span><br/>
-      <span class="c">Running: uv run python scripts/run_decay.py --help</span><br/>
+      <span class="c">Running: uv run scripts/run_decay.py --help</span><br/>
       <span class="bad">error: unrecognized arguments: --steps</span><br/>
       <span class="c">Fixing the argument name…</span><br/>
       <span class="ok">usage: run_decay.py [-h] [--k K] [--y0 Y0] [--steps STEPS]</span>
     </p>
-    <p class="text-lg" style="margin-bottom: 0;">Watch for the <strong>plan</strong> before any code &mdash; and for a <strong>mistake</strong> and its <strong>recovery</strong>.</p>
+    <p class="text-lg" style="margin-bottom: 0;">Watch for the <strong>plan</strong>, then a <strong>mistake</strong> and its <strong>recovery</strong>.</p>
+    <p class="footnote">The demo itself runs live in the terminal.</p>
   </div>
-  <aside class="notes">
-    LIVE, not slides — this transcript is only a fallback if the demo cannot run. Run it in the terminal. Let them see Claude stumble and fix itself; narrate the loop as it happens. Keep it under six minutes. Ask them to jot down one thing they want to try.
-  </aside>
 </section>
 
 <!-- ============================================================
@@ -314,7 +279,7 @@ uv add matplotlib                # you will plot later
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 16px;">
       <div class="card accent">
         <h3>Plan mode reads only</h3>
-        <p>Claude reads and answers, and leaves every file alone. Safe to point at code you care about.</p>
+        <p>Claude reads and answers, and changes nothing. Safe to point at code you care about.</p>
       </div>
       <div class="card accent">
         <h3>Ask for the map</h3>
@@ -323,32 +288,26 @@ uv add matplotlib                # you will plot later
     </div>
     <blockquote>Understanding now is cheaper than unwinding a wrong change later.</blockquote>
   </div>
-  <aside class="notes">
-    Show how to enter plan mode (Shift+Tab; the status line says plan mode on). This maps to the canonical first step: Explore. The same habit works on the 100k-line legacy code you inherited from a departed PhD student — that is the sales pitch for this audience.
-  </aside>
 </section>
 
 <section id="init">
   <p class="eyebrow">§3 · Understand the repo</p>
-  <h2>Write the map down + <code>CLAUDE.md</code></h2>
+  <h2>Write the map down: <code>CLAUDE.md</code></h2>
   <div class="content">
-    <p class="text-lg">A repo can carry its own briefing: build and test commands, layout, the conventions it expects. <code>odelab</code> ships one &mdash; <strong>read it</strong>, it is the shape to aim for.</p>
+    <p class="text-lg">A repo can carry its own briefing: commands, layout, conventions.</p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 18px 0;">
       <div class="card">
         <h3>Plan mode</h3>
-        <p>How <strong>you</strong> read the repo. Answers land in the conversation and leave with it.</p>
+        <p>How <strong>you</strong> read the repo. Answers leave with the conversation.</p>
       </div>
       <div class="card">
         <h3><code>CLAUDE.md</code></h3>
-        <p>How the <strong>repo</strong> remembers. One file, on disk, in git, loaded every session.</p>
+        <p>How the <strong>repo</strong> remembers. One file, in git, loaded every session.</p>
       </div>
     </div>
-    <p class="text-lg">Starting a repo that has none? <code>/init</code> explores it and drafts one for you &mdash; then you <strong>cut it down</strong>, which is what §4 is about.</p>
-    <p class="footnote">We are not running <code>/init</code> today: <code>odelab</code> already has a <code>CLAUDE.md</code>, so it would only offer to tidy it.</p>
+    <p class="text-lg">No <code>CLAUDE.md</code> yet? <code>/init</code> drafts one &mdash; then you <strong>cut it down</strong> (§4).</p>
+    <p class="footnote">Not today: <code>odelab</code> already has one, so <code>/init</code> would only offer to tidy it.</p>
   </div>
-  <aside class="notes">
-    Be explicit about the division of labour: CLAUDE.md is how the repo remembers, plan mode is how you understand code. People conflate them. Open odelab's CLAUDE.md on screen and read two lines out loud — short, imperative, checkable — that lands the concision lesson before §4 even starts. Mention /init as the bootstrap for a repo with nothing, and say plainly that nobody needs to run it today; that saves twenty people generating a diff against a file we want to keep.
-  </aside>
 </section>
 
 <section id="task-explore" class="task">
@@ -361,15 +320,12 @@ uv add matplotlib                # you will plot later
     <pre><code data-trim data-noescape class="language-bash">
 claude --model sonnet --effort medium
     </code></pre>
-    <p class="text-lg" style="margin: 12px 0 0 0;"><strong>Sonnet on <code>medium</code> is enough for everything today</strong> &mdash; anything more and you spend the hands-on segments watching it think.</p>
+    <p class="text-lg" style="margin: 12px 0 0 0;"><strong>Sonnet on <code>medium</code> is enough today</strong> &mdash; more effort just means more waiting.</p>
     <p class="text-lg" style="margin: 14px 0 8px 0;">In <strong>plan mode</strong> (Shift+Tab), ask:</p>
-    <blockquote style="border-left-color: #59B200; margin: 0 0 12px 0;">explain this repository &mdash; structure, what each module does, how to run it and the tests</blockquote>
-    <blockquote style="border-left-color: #59B200; margin: 0 0 14px 0;">where would I add a new integration method, and what should I test?</blockquote>
+    <blockquote class="prompt" style="margin: 0 0 12px 0;">explain this repository &mdash; structure, what each module does, how to run it and the tests</blockquote>
+    <blockquote class="prompt" style="margin: 0 0 14px 0;">where would I add a new integration method, and what should I test?</blockquote>
     <p class="done push"><span class="done-label">Done when</span>you can describe the repo in one sentence, and you have read its <code>CLAUDE.md</code>.</p>
   </div>
-  <aside class="notes">
-    Put the model line on the board before they start — sonnet, medium — and repeat the reason: on high effort this segment becomes a waiting room. The point is the habit, the repo is small enough to read by hand. Let two or three people share what Claude told them — especially anything it got wrong. Have them open odelab's CLAUDE.md at the end and compare it against what Claude just told them: the file is the short version of the same map.
-  </aside>
 </section>
 
 <!-- ============================================================
@@ -394,49 +350,43 @@ claude --model sonnet --effort medium
         <h3><code>./CLAUDE.md</code></h3>
         <p><strong>Project memory.</strong> This repo, shared with the team through git.</p>
       </div>
-      <div class="card plain">
-        <h3>Auto memory</h3>
-        <p><strong>Claude&rsquo;s own notes</strong> &mdash; what it learned about your project. On by default, machine-local.</p>
+      <div class="card">
+        <h3><code>~/.claude/projects/</code></h3>
+        <p><strong>Auto memory.</strong> Claude&rsquo;s own notes on your project. On by default, machine-local.</p>
       </div>
     </div>
-    <p class="text-lg" style="margin: 14px 0 8px 0;">The first two are instructions <em>you</em> write, and user memory pays its cost in <strong>every</strong> session. A real one:</p>
+    <p class="text-lg" style="margin: 14px 0 8px 0;">The first two are instructions <em>you</em> write. User memory costs tokens in <strong>every</strong> session &mdash; a real one:</p>
     <p class="term" style="font-size: 12pt !important;">All Python projects use uv!<br/>
       Docstrings must follow numpy style!<br/>
       Never modify tests marked <span class="p">@pytest.mark.protected</span> without explicit approval!<br/>
       GH issues and PRs must include <span class="p">p-&lt;x&gt;</span> priority and <span class="p">effort-&lt;x&gt;</span> labels.<br/>
       New features must start in a branch or git worktree.<br/>
       Explicit Error &gt; User Warning &gt; Silent Failure &gt; Crash.</p>
-    <p class="footnote"><code>/memory</code> lists and opens all of them; the file closest to your working directory has the last word.</p>
+    <p class="footnote"><code>/memory</code> lists and opens all of them.</p>
   </div>
-  <aside class="notes">
-    This excerpt is the instructor's actual user memory, which is why it reads like a person rather than a style guide. The line to point at is "new features must start in a branch" — it comes back in §5, so the audience sees a rule turn into behaviour within the hour. The label rule is a house convention for working PRs with an agent; we do not use it today, so name it in half a sentence and move on. Every line is imperative and checkable; none of them explain what git is. That is the register to aim for. Mention auto memory because they will see "Saved 2 memories" in the transcript and ask: Claude keeps its own notes per project under ~/.claude/projects/, loaded every session, and you can switch it off in /memory. The useful distinction is authorship — you write instructions, it writes observations.
-  </aside>
 </section>
 
 <section id="claude-md">
   <p class="eyebrow">§4 · Steering the agent</p>
   <h2><code>CLAUDE.md</code> &mdash; project memory</h2>
   <div class="content">
-    <p class="text-lg">Instructions Claude reads <strong>every session</strong>: conventions, how to run things, gotchas. Loaded in full, however long it is &mdash; the official target is <strong>under 200 lines</strong>.</p>
+    <p class="text-lg">Instructions Claude reads <strong>every session</strong>: conventions, how to run things, gotchas. Loaded in full, however long it is &mdash; so keep it <strong>short</strong>.</p>
     <div class="card" style="margin: 14px 0;">
       <h3>The concision test</h3>
       <p>For each line ask: <strong>&ldquo;would removing this cause a mistake?&rdquo;</strong> If not &mdash; cut it.</p>
     </div>
-    <blockquote style="margin: 0;">Bloated <code>CLAUDE.md</code> files get <strong>ignored</strong> &mdash; the rules that matter drown in the noise.</blockquote>
-    <p class="footnote">It is <em>context</em>, delivered as a message &mdash; guidance, not enforcement. To make something impossible instead of merely requested, use a hook (§7).</p>
+    <blockquote style="margin: 0;">Bloated <code>CLAUDE.md</code> files get <strong>ignored</strong>.</blockquote>
+    <p class="footnote">It is <em>context</em>, not enforcement. To make something impossible rather than requested, use a hook (§7).</p>
   </div>
-  <aside class="notes">
-    Concision over completeness is THE lesson here. Show odelab's short CLAUDE.md as the model, and be honest that the failure mode is writing a style guide nobody — human or model — reads.
-  </aside>
 </section>
 
 <section id="skills">
   <p class="eyebrow">§4 · Steering the agent</p>
   <h2>Skills &mdash; instructions on demand</h2>
   <div class="content">
-    <p class="text-lg"><code>CLAUDE.md</code> is always loaded. A <strong>skill</strong> loads only when its description matches what you are doing &mdash; which keeps both of them short.</p>
+    <p class="text-lg"><code>CLAUDE.md</code> is always loaded. A <strong>skill</strong> loads only when its <code>description</code> matches.</p>
+    <p class="filename">.claude/skills/decay-plots/SKILL.md</p>
     <pre><code data-trim data-noescape class="language-markdown">
-# .claude/skills/decay-plots/SKILL.md
 ---
 name: decay-plots
 description: Plot solver output against the analytic solution.
@@ -446,14 +396,8 @@ description: Plot solver output against the analytic solution.
 Use matplotlib. Put the error on a log axis.
 Label every axis with units. Save to figures/ as PDF.
     </code></pre>
-    <ul style="margin-top: 6px;">
-      <li><strong><code>description</code></strong> says <em>when</em> to use it &mdash; the line beginners get wrong</li>
-      <li>The body is plain instructions. A folder and a Markdown file is the entire format</li>
-    </ul>
+    <p class="text-lg" style="margin: 6px 0 0 0;">The <code>description</code> says <em>when</em> to use it. Write it as &ldquo;use when&hellip;&rdquo;.</p>
   </div>
-  <aside class="notes">
-    Skills deserve their own beat — they are the main customization lever people take home. Show the file, because the hands-on asks them to write one: people who have never seen a SKILL.md stall for five minutes on the frontmatter. Hammer the description field: write it as "use when…", since that is what the model matches against. Good first candidates: their plotting conventions, their docstring style, their group's slide template.
-  </aside>
 </section>
 
 <section id="permissions">
@@ -464,14 +408,11 @@ Label every axis with units. Save to figures/ as PDF.
     <dl class="kv" style="grid-template-columns: 250px 1fr; margin-top: 18px;">
       <dt>Plan</dt><dd>reads only. Explore anything, change nothing.</dd>
       <dt>Manual</dt><dd>the default &mdash; asks before each edit and command.</dd>
-      <dt>Edit automatically</dt><dd>edits freely, still asks for commands. Fast, wants a clean git tree.</dd>
-      <dt>/permissions</dt><dd>the allowlist &mdash; grant <code>Bash(uv run pytest)</code> once, stop being asked.</dd>
+      <dt>Edit automatically</dt><dd>edits freely, still asks for commands.</dd>
     </dl>
-    <p class="footnote">Keep the agent on a leash you have consciously chosen &mdash; a dirty git tree is the one thing that makes a mistake expensive.</p>
+    <p class="text-lg" style="margin-top: 18px;"><code>/permissions</code> is the allowlist &mdash; grant <code>Bash(uv run pytest)</code> once, stop being asked.</p>
+    <p class="footnote">Your real protection is a clean git tree, not the prompt.</p>
   </div>
-  <aside class="notes">
-    Demo /permissions live. The safety message: your real protection is git, not the permission prompt. The reasoning-effort card that used to sit here now lives on the §2 interface slide, where it arrives before their first session rather than after it.
-  </aside>
 </section>
 
 <section id="privacy">
@@ -487,7 +428,7 @@ Label every axis with units. Save to figures/ as PDF.
       </div>
       <div class="card plain">
         <h3>Policies vary and change</h3>
-        <p>Retention and training terms differ per plan, and get revised.</p>
+        <p>Retention and training terms differ per plan, and change.</p>
       </div>
       <div class="card plain">
         <h3>Unpublished work</h3>
@@ -498,12 +439,9 @@ Label every axis with units. Save to figures/ as PDF.
         <p>Institutional policy, funder terms, GDPR, industry NDAs.</p>
       </div>
     </div>
-    <blockquote style="margin: 16px 0 0 0;">Would you be comfortable with this content being read by a third party? If the answer is no, keep it out of the agent.</blockquote>
+    <blockquote style="margin: 16px 0 0 0;">Would you be comfortable with a third party reading this? If not, keep it out of the agent.</blockquote>
     <p class="footnote">University AI services: <code>uni-stuttgart.de/en/digital-services/ai-for-students</code> &middot; ICP runs a local model for privacy-sensitive questions.</p>
   </div>
-  <aside class="notes">
-    Do not skip this and do not moralise it — for this room it is the question that decides whether they use any of this on real work. Answer it in one honest sentence: code and files you point the agent at leave the building, so choose what you point it at. The local ICP model is the escape hatch for privacy-sensitive chat; verify the current URL, model and Mattermost command before the session, and be explicit that a local chat model is a different thing from the agentic loop we just taught — it will not run your tests for you.
-  </aside>
 </section>
 
 <section id="task-steering" class="task">
@@ -515,15 +453,12 @@ Label every axis with units. Save to figures/ as PDF.
   <div class="content">
     <p class="text-lg" style="margin-bottom: 12px;">Pick <strong>one or two</strong>:</p>
     <ol>
-      <li>Add a rule to <code>CLAUDE.md</code> (&ldquo;use NumPy-style docstrings&rdquo;, &ldquo;prefer dataclasses&rdquo;), ask Claude for a small helper, then <strong>remove the rule</strong> and regenerate. Spot the difference.</li>
-      <li>Use &mdash; or write &mdash; a tiny <strong>skill</strong> that encodes one personal convention.</li>
+      <li>Add a rule to <code>CLAUDE.md</code> (&ldquo;use NumPy-style docstrings&rdquo;), ask for a small helper, then <strong>remove the rule</strong> and regenerate.</li>
+      <li>Write a tiny <strong>skill</strong> for one personal convention.</li>
       <li>Compare <strong>plan</strong> and <strong>edit automatically</strong> on a trivial edit; open <code>/permissions</code>.</li>
     </ol>
     <p class="done push"><span class="done-label">Done when</span>you have watched configuration visibly change Claude&rsquo;s output.</p>
   </div>
-  <aside class="notes">
-    The "aha" is that a one-line rule changes the output. Keep it snappy — this is a warm-up for §5, not a project. Watch the clock: this is the segment to cut if §5 is at risk.
-  </aside>
 </section>
 
 <section id="break" class="section-divider" data-state="is-divider">
@@ -548,27 +483,15 @@ Label every axis with units. Save to figures/ as PDF.
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 18px 0;">
       <div class="card">
         <h3>One branch</h3>
-        <p>Open <code>add-rk4</code> <strong>before</strong> any code lands. A feature starts on its own branch.</p>
+        <p>Open <code>add-rk4</code> <strong>before</strong> any code lands.</p>
       </div>
       <div class="card">
-        <h3>Several commits</h3>
-        <p>Split your work into small pieces and commit frequently for better tracking and review.</p>
+        <h3>Two commits</h3>
+        <p>The failing test first, then the code that makes it pass.</p>
       </div>
     </div>
-    <p class="footnote">The canonical loop is <em>Explore → Plan → Implement → Commit</em>, and adversarial review is now part of it. <strong>Test-first is our addition</strong> &mdash; on numerical code it is what makes the rest trustworthy.</p>
-    <div class="push">
-      <ul class="rail">
-        <li>plan</li>
-        <li>test</li>
-        <li>implement</li>
-        <li>review</li>
-        <li>ship</li>
-      </ul>
-    </div>
+    <p class="footnote">The canonical loop is <em>Explore → Plan → Implement → Commit</em>; <strong>test-first is our addition</strong>.</p>
   </div>
-  <aside class="notes">
-    Set the arc. Same five beats as the agent loop from §1 — point back at it. Two things to hammer: the branch exists before the first edit, and the failing test gets its own commit. A branch whose history reads "tests, then implementation" is reviewable; one giant commit is not. Total 46 minutes; call the phase changes out loud.
-  </aside>
 </section>
 
 <section id="precise">
@@ -576,20 +499,17 @@ Label every axis with units. Save to figures/ as PDF.
   <h2>Say it precisely</h2>
   <div class="content">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-      <div class="card stop">
-        <h3>Vague</h3>
-        <p>&ldquo;Fix the integrator.&rdquo;<br/>&ldquo;Write some tests.&rdquo;<br/>&ldquo;Make it more accurate.&rdquo;<span class="verdict">The agent guesses scope, place and approach.</span></p>
-      </div>
       <div class="card go">
         <h3>Precise</h3>
         <p>&ldquo;Add an <code>rk4_step</code> to <code>odelab/integrators.py</code>, used through <code>integrate(..., method=...)</code>, and assert convergence order 4 the way <code>test_euler_is_first_order</code> does.&rdquo;<span class="verdict">One reading. Nothing left to invent.</span></p>
       </div>
+      <div class="card stop">
+        <h3>Vague</h3>
+        <p>&ldquo;Fix the integrator.&rdquo;<br/>&ldquo;Write some tests.&rdquo;<br/>&ldquo;Make it more accurate.&rdquo;<span class="verdict">The agent guesses scope, place and approach.</span></p>
+      </div>
     </div>
     <p class="text-lg" style="margin-top: 18px;"><strong>Reduce what the agent has to assume:</strong> which file, which function, what is wrong, how you want it fixed.</p>
   </div>
-  <aside class="notes">
-    The four questions are the checklist. This is the practical form of the divergence lesson from §1: every assumption you leave open is a place the plan can quietly diverge from your intent. Read the precise version out loud — people underestimate how much detail is useful, and it is still only one sentence.
-  </aside>
 </section>
 
 <section id="phase-plan">
@@ -599,8 +519,8 @@ Label every axis with units. Save to figures/ as PDF.
     <p class="text-lg">Get a plan <strong>before</strong> any code. Plan mode, or a brainstorming pass.</p>
     <ul style="margin-top: 10px;">
       <li>Have Claude draft the plan</li>
-      <li>Iteratively improve the plan together with Claude.</li>
-      <li>Approve the plan and then open the branch the work will live on</li>
+      <li>Revise it together</li>
+      <li>Approve it, then open the branch</li>
     </ul>
     <pre><code data-trim data-noescape class="language-bash">
 git switch -c add-rk4      # before the first edit, always
@@ -615,9 +535,6 @@ git switch -c add-rk4      # before the first edit, always
       </ul>
     </div>
   </div>
-  <aside class="notes">
-    The annotation trick prevents premature coding — Claude tends to jump straight to implementing. "Do not implement yet" is the phrase to teach; make them say it out loud.
-  </aside>
 </section>
 
 <section id="task-plan" class="task">
@@ -627,26 +544,24 @@ git switch -c add-rk4      # before the first edit, always
   </div>
   <h2>Plan RK4, open the branch</h2>
   <div class="content">
-    <blockquote style="border-left-color: #59B200; margin: 0 0 14px 0;">In plan mode: plan adding an <code>rk4_step</code> to <code>odelab</code>, reusing the existing <code>integrate(..., method=...)</code> hook.</blockquote>
+    <blockquote class="prompt" style="margin: 0 0 14px 0;">In plan mode: plan adding an <code>rk4_step</code> to <code>odelab</code>, reusing the existing <code>integrate(..., method=...)</code> hook.</blockquote>
     <ul>
-      <li>Review the plan and add a note or two of your own</li>
-      <li>Tell it to revise the plan &mdash; <strong>without coding yet</strong></li>
+      <li>Add a note or two of your own</li>
+      <li>Have it revise &mdash; <strong>without coding yet</strong></li>
     </ul>
     <pre><code data-trim data-noescape class="language-bash">
+git stash -u               # park your §4 experiments
 git switch -c add-rk4
     </code></pre>
     <p class="done push"><span class="done-label">Done when</span>you have a plan you would sign off on, on a fresh branch.</p>
   </div>
-  <aside class="notes">
-    Circulate and read plans over shoulders. Common failure: the plan silently invents a new dispatch mechanism instead of reusing the method= hook — a good teaching moment about being specific. Check that everyone is off main before Phase 2 starts.
-  </aside>
 </section>
 
 <section id="phase-test">
   <p class="eyebrow">§5 · Phase 2</p>
   <h2>Test first &mdash; red, then commit</h2>
   <div class="content">
-    <p class="text-lg">Give the agent a <strong>pass/fail check</strong> it can run itself. For numerical code, that is a test.</p>
+    <p class="text-lg">Give the agent a <strong>pass/fail check</strong> it can run itself.</p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 14px;">
       <div class="card accent">
         <h3>Accuracy</h3>
@@ -657,7 +572,7 @@ git switch -c add-rk4
         <p>Double the steps → the error drops <strong>~16×</strong>. Euler manages ~2×.</p>
       </div>
     </div>
-    <p class="text-lg" style="margin: 14px 0 0 0;"><strong>commit</strong> the red test before starting the implementation</p>
+    <p class="text-lg" style="margin: 14px 0 0 0;"><strong>Commit the red test</strong> before any implementation.</p>
     <div class="push">
       <ul class="rail">
         <li class="is-done">plan</li>
@@ -668,9 +583,6 @@ git switch -c add-rk4
       </ul>
     </div>
   </div>
-  <aside class="notes">
-    Contrast with test_euler_is_first_order in the repo — it already asserts the ~2x factor, so they have a template. The convergence-order test is the real property to assert: it pins the method, not just one number.
-  </aside>
 </section>
 
 <section id="task-test" class="task">
@@ -680,16 +592,14 @@ git switch -c add-rk4
   </div>
   <h2>Write the failing test</h2>
   <div class="content">
-    <blockquote style="border-left-color: #59B200; margin: 0 0 14px 0;">Add tests for <code>rk4_step</code> <strong>before</strong> implementing it &mdash; matching the analytic solution, and checking the convergence order.</blockquote>
+    <blockquote class="prompt" style="margin: 0 0 14px 0;">Add tests for <code>rk4_step</code> <strong>before</strong> implementing it: the analytic solution, and the convergence order.</blockquote>
     <pre><code data-trim data-noescape class="language-bash">
-uv run pytest -q                 # RED — rk4_step does not exist yet
-git commit -am "Add failing RK4 accuracy + convergence tests"
+uv run pytest -q             # RED — rk4_step does not exist yet
+git add -A
+git commit -m "Add failing RK4 accuracy + convergence tests"
     </code></pre>
     <p class="done push"><span class="done-label">Done when</span>the test fails for the right reason &mdash; and that failure is committed.</p>
   </div>
-  <aside class="notes">
-    "Fails for the right reason" matters: an ImportError is the expected red, a passing test means the test is wrong. Check a few screens for tests that assert nothing. Committing the red test is the habit to instil — it is the specification, and it survives whatever the implementation turns into.
-  </aside>
 </section>
 
 <section id="phase-implement">
@@ -705,7 +615,7 @@ git commit -am "Add failing RK4 accuracy + convergence tests"
       <span class="add">+ k3 = f(t + dt / 2, y + dt / 2 * k2)</span><br/>
       <span class="ok">6 passed</span>
     </p>
-    <p class="text-lg">Green tests verfiy the intended feature was implemented. <strong>Commit the result</strong>.</p>
+    <p class="text-lg"><strong>Commit the result.</strong></p>
     <div class="push">
       <ul class="rail">
         <li class="is-done">plan</li>
@@ -716,9 +626,6 @@ git commit -am "Add failing RK4 accuracy + convergence tests"
       </ul>
     </div>
   </div>
-  <aside class="notes">
-    This is the payoff of the self-verifying loop: observe → revise, driven by pytest rather than by you. Let them watch Claude iterate. Point out that the failure message did the teaching, not the human.
-  </aside>
 </section>
 
 <section id="task-implement" class="task">
@@ -728,30 +635,29 @@ git commit -am "Add failing RK4 accuracy + convergence tests"
   </div>
   <h2>Make it green</h2>
   <div class="content">
-    <blockquote style="border-left-color: #59B200; margin: 0 0 14px 0;">Implement <code>rk4_step</code> until my tests pass.</blockquote>
+    <blockquote class="prompt" style="margin: 0 0 14px 0;">Implement <code>rk4_step</code> until my tests pass.</blockquote>
     <pre><code data-trim data-noescape class="language-bash">
 uv run pytest -q
-git commit -am "Add RK4 integrator"
-git log --oneline           # two commits: the spec, then the code
+git add -A
+git commit -m "Add RK4 integrator"
+git log --oneline            # two commits: the spec, then the code
     </code></pre>
-    <p class="done push"><span class="done-label">Done when</span>all tests pass and your branch holds <strong>at least</strong> two commits.</p>
+    <p class="footnote">Stuck? After two failed tries, <code>/clear</code> and reprompt (§6).</p>
+    <p class="done push"><span class="done-label">Done when</span>all tests pass and your branch holds two commits.</p>
   </div>
-  <aside class="notes">
-    Hands off the keyboard where possible — the point is watching the loop run itself. If someone is stuck in a correction spiral, that is failure pattern 2 from §6: /clear and reprompt. End by having them read their own git log: "tests, then implementation" is the shape to recognise.
-  </aside>
 </section>
 
 <section id="phase-review">
   <p class="eyebrow">§5 · Phase 4</p>
   <h2>Review</h2>
   <div class="content">
-    <p class="text-lg">Two reviewers: the agent, and <strong>you</strong>. Both read the <strong>whole branch</strong>, both commits.</p>
+    <p class="text-lg">Two reviewers: the agent, and <strong>you</strong>. Both read the <strong>whole branch</strong>.</p>
     <ul style="margin-top: 10px;">
       <li><code>/code-review</code> takes your branch against <code>main</code>, or ask Claude to review it <strong>adversarially</strong></li>
       <li><strong>Read the diff yourself</strong> &mdash; correctness first, then clarity</li>
       <li>Request changes; re-run the tests; commit the fixes</li>
     </ul>
-    <blockquote>Avoid merging what you did not review.</blockquote>
+    <blockquote>Merge only what you have read.</blockquote>
     <div class="push">
       <ul class="rail">
         <li class="is-done">plan</li>
@@ -762,9 +668,6 @@ git log --oneline           # two commits: the spec, then the code
       </ul>
     </div>
   </div>
-  <aside class="notes">
-    Universally recommended across every serious source: validate the output. "Adversarially" is the useful word — asking "is this correct?" invites agreement, asking "find what is wrong with this" does not.
-  </aside>
 </section>
 
 <section id="task-review" class="task">
@@ -775,29 +678,24 @@ git log --oneline           # two commits: the spec, then the code
   <h2>Review the diff</h2>
   <div class="content">
     <pre><code data-trim data-noescape class="language-bash">
-git diff main...HEAD      # the whole branch, both commits
+git diff main...HEAD         # the whole branch, both commits
     </code></pre>
-    <blockquote style="border-left-color: #59B200; margin: 14px 0 0 0;">Review your change for correctness and clarity &mdash; find what is wrong with it.</blockquote>
+    <blockquote class="prompt" style="margin: 14px 0 0 0;">Review your change for correctness and clarity &mdash; find what is wrong with it.</blockquote>
     <p class="text-lg" style="margin-top: 14px;">Then read it yourself and request one improvement.</p>
     <p class="done push"><span class="done-label">Done when</span>you have read every changed line and the tests still pass.</p>
   </div>
-  <aside class="notes">
-    Insist on the human read. Ask afterwards: who found something Claude's own review missed? Usually at least one person has an unnecessary helper or a docstring that contradicts the code.
-  </aside>
 </section>
 
 <section id="phase-ship">
   <p class="eyebrow">§5 · Phase 5</p>
   <h2>Land it on <code>main</code></h2>
   <div class="content">
-    <p class="text-lg">The branch exists, holds two commits, and you have read every line. Bring it home.</p>
+    <p class="text-lg">Two commits, every line read. Hand the merge to Claude:</p>
+    <blockquote class="prompt">merge <code>add-rk4</code> into <code>main</code> with <code>--no-ff</code>, and write the message: what &amp; why, and how you tested it.</blockquote>
     <pre><code data-trim data-noescape class="language-bash">
-git switch main
-git merge --no-ff add-rk4        # keep the branch visible in the history
-git log --oneline --graph
+git log --oneline --graph    # the branch is still visible
     </code></pre>
-    <p class="text-lg"><strong>Small and targeted feature implementations.</strong></p>
-    <p class="footnote">Same discipline with a remote: push the branch and open a pull request, which is where CI and a second reader come in &mdash; see §7.</p>
+    <p class="footnote">With a remote, the same discipline is a pull request &mdash; see §7.</p>
     <div class="push">
       <ul class="rail">
         <li class="is-done">plan</li>
@@ -808,9 +706,6 @@ git log --oneline --graph
       </ul>
     </div>
   </div>
-  <aside class="notes">
-    Deliberately local: gh is not installed on the ICP machines and push credentials are one failure surface too many for twenty people at once. Nothing is lost — the reviewable-diff lesson is the durable part, and --no-ff keeps "tests, then implementation, on a branch" legible in the graph. Have them read their own git log --graph out loud. If anyone forked and wants the real thing, they can push and open the PR in the browser afterwards; point at §7 for gh and CI.
-  </aside>
 </section>
 
 <section id="task-ship" class="task">
@@ -820,22 +715,17 @@ git log --oneline --graph
   </div>
   <h2>Merge it</h2>
   <div class="content">
-    <p class="text-lg">Ask Claude for the merge message first &mdash; <strong>what &amp; why</strong>, and <strong>how you tested it</strong>. That paragraph is what a reviewer, or you in six months, actually reads.</p>
+    <blockquote class="prompt" style="margin: 0 0 14px 0;">merge <code>add-rk4</code> into <code>main</code> with <code>--no-ff</code>. Write the message: what &amp; why, and how you tested it.</blockquote>
     <pre><code data-trim data-noescape class="language-bash">
-git switch main
-git merge --no-ff add-rk4
-uv run pytest                    # green on main
+uv run pytest                # green on main, not just on the branch
 git log --oneline --graph
     </code></pre>
     <div class="card go" style="margin-top: 14px;">
       <h3 class="go">Fast finishers</h3>
-      <p>The plots and the logistic example misbehave. Hunt and fix the planted <strong>bugs</strong> &mdash; start with <code>scripts/plot_decay.py</code>.</p>
+      <p>The plots and the logistic example misbehave. <code>uv add matplotlib</code>, then hunt the planted <strong>bugs</strong> &mdash; start with <code>scripts/plot_decay.py</code>.</p>
     </div>
     <p class="done push"><span class="done-label">Done when</span><code>main</code> holds your feature, the tests are green, and the graph shows the branch.</p>
   </div>
-  <aside class="notes">
-    Re-running pytest after the merge is the habit worth naming: green on the branch is not green on main. Three planted bugs for the fast finishers, answer key in instructor_notes.md: a sign error in the analytic overlay, an off-by-one in plot_error, and a wrong sign in rhs_logistic. The first one is the best teaching moment — the bug is in the reference, not the integrator.
-  </aside>
 </section>
 
 <!-- ============================================================
@@ -856,11 +746,8 @@ git log --oneline --graph
     <div class="fix"><p class="pat">Over-specified <code>CLAUDE.md</code></p><p class="rem">Prune ruthlessly</p></div>
     <div class="fix"><p class="pat">Trust-then-verify gap</p><p class="rem">Always give a check. Cannot verify → do not ship</p></div>
     <div class="fix"><p class="pat">Infinite exploration</p><p class="rem">Scope narrowly, or delegate to a subagent</p></div>
-    <p class="footnote">Autonomous runs fail the same ways: <em>overexcitement</em> (declaring success on a failure), <em>implementation drift</em>, context degradation on long tasks. Trehan &amp; Chopra, arXiv:2601.03315 &middot; taxonomy: Cemri et al., arXiv:2503.13657.</p>
+    <p class="footnote">Autonomous runs fail the same ways: <em>overexcitement</em> (declaring success on a failure), <em>implementation drift</em>, context degradation. Trehan &amp; Chopra, arXiv:2601.03315 &middot; taxonomy: Cemri et al., arXiv:2503.13657.</p>
   </div>
-  <aside class="notes">
-    Tie each one to what they just experienced in §5. Quick round: "what tripped you up?" — then map their answer onto a pattern. This debrief is worth protecting; it is where the session's lessons get named.
-  </aside>
 </section>
 
 <section id="context-window">
@@ -875,14 +762,11 @@ git log --oneline --graph
       &nbsp;20%|<span class="ok">████</span><span class="c">░░░░░░░░░░░░░░░░</span>| <span class="c">summarised — the detail is gone</span>
     </p>
     <ul style="margin-top: 4px;">
-      <li><code>/context</code> &mdash; see what is filling it, including what your <code>CLAUDE.md</code> costs every session</li>
+      <li><code>/context</code> &mdash; what is filling it, including your <code>CLAUDE.md</code></li>
       <li><code>/clear</code> between unrelated tasks &middot; <code>/compact</code> to keep going through one</li>
       <li><strong>Write it to disk.</strong> A plan file survives compaction; a subagent keeps its reading out of your window</li>
     </ul>
   </div>
-  <aside class="notes">
-    This slide explains pitfalls 1 and 2 — without it they are arbitrary rules. Run /context live: the CLAUDE.md line is the punchline of §4's concision lesson, made visible in tokens. "Write it down" is the durable habit: the annotated plan from §5 Phase 1 is not just a review artefact, it is the memory that survives a compaction.
-  </aside>
 </section>
 
 <!-- ============================================================
@@ -901,32 +785,32 @@ git log --oneline --graph
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
       <div class="card">
         <h3>Subagents</h3>
-        <p>A scoped task in its own context, reporting back a summary. The reading stays out of your window.</p>
+        <p>A scoped task in its own context. Its reading stays out of your window.</p>
       </div>
       <div class="card">
         <h3>Hooks</h3>
         <p>Deterministic automation on events. This one runs the suite after every edit:</p>
       </div>
     </div>
-    <pre style="margin-top: 16px;"><code data-trim data-noescape class="language-json">
-// .claude/settings.json
-"hooks": { "PostToolUse": [ {
-    "matcher": "Edit|Write",
-    "hooks": [ { "type": "command", "command": "uv run pytest -q" } ]
-} ] }
+    <p class="filename">.claude/settings.json</p>
+    <pre><code data-trim data-noescape class="language-json">
+{
+  "hooks": {
+    "PostToolUse": [
+      { "matcher": "Edit|Write",
+        "hooks": [ { "type": "command", "command": "uv run pytest -q" } ] }
+    ]
+  }
+}
     </code></pre>
-    <p class="text-lg muted" style="margin-bottom: 0;">Both are configuration, both are steering &mdash; §4 with a wider reach.</p>
   </div>
-  <aside class="notes">
-    A REAL short demo, not a throwaway mention — whichever you are most fluent in. The hook lands hardest with this audience: a failing test suite that speaks up before the agent claims success is exactly the trust-then-verify fix from §6, automated. A subagent is defined by a Markdown file in .claude/agents/ with a name, a description of when to use it, and a prompt — same shape as a skill.
-  </aside>
 </section>
 
 <section id="mcp">
   <p class="eyebrow">§7 · Beyond the basics</p>
   <h2>MCP &mdash; hand the agent a new tool</h2>
   <div class="content">
-    <p class="text-lg">One protocol between agents and tools. Anthropic published it in November 2024; the other vendors adopted it.</p>
+    <p class="text-lg">One protocol between agents and tools. Anthropic published it in 2024; the other vendors adopted it.</p>
     <pre><code data-trim data-noescape class="language-python">
 import subprocess
 from fastmcp import FastMCP
@@ -942,11 +826,8 @@ def job_status(job_id: str) -&gt; str:
       <li>The type hints tell the agent <strong>what to pass</strong></li>
       <li>The docstring tells it <strong>when to call</strong> &mdash; the same lesson as a skill&rsquo;s <code>description</code></li>
     </ul>
-    <p class="footnote">The one to try first: <strong>Context7</strong>, which fetches current library documentation so the agent stops guessing APIs.</p>
+    <p class="footnote">Try <strong>Context7</strong> first: current library docs, so the agent stops guessing APIs.</p>
   </div>
-  <aside class="notes">
-    Nine lines to give any agent a new capability — that is the whole demystification. Pick whichever example is real for you; a squeue wrapper lands with this audience because everyone has typed it a hundred times. Note the trade-off honestly: an MCP server's tools sit in context whether you use them or not, so a skill wrapping a CLI you already have is often the cheaper answer. Use both, and know why.
-  </aside>
 </section>
 
 <section id="tools">
@@ -959,13 +840,12 @@ def job_status(job_id: str) -&gt; str:
       <dt>mattpocock/skills</dt><dd>curated skills you can read in a minute each</dd>
       <dt>anthropics/claude-code-action</dt><dd>review every PR in CI &mdash; <code>/install-github-app</code> wires it up</dd>
     </dl>
-    <p class="text-lg" style="margin-top: 16px;">Install from the official marketplace: <code>/plugin install superpowers@claude-plugins-official</code></p>
-    <p class="text-lg">Read a skill before you install it. It is instructions going straight into your agent &mdash; the same trust question as any dependency.</p>
-    <p class="footnote">The fastest-moving slide in the deck: <code>mattpocock/skills</code> did not exist six months ago, and there are already eight community forks of <code>superpowers</code> with similar names. Check what you are installing.</p>
+    <pre style="margin-top: 18px;"><code data-trim data-noescape class="language-bash">
+/plugin install superpowers@claude-plugins-official
+    </code></pre>
+    <p class="text-lg">Read a skill before you install it: instructions going straight into your agent.</p>
+    <p class="footnote">The fastest-moving slide in the deck &mdash; <code>superpowers</code> has look-alike forks. Check what you are installing.</p>
   </div>
-  <aside class="notes">
-    Pointers, not a lab exercise — do not have twenty people npx-install a third-party skill pack mid-session; that is a network dependency and twenty new debugging surfaces. The transferable lesson is the one on the slide: a skill is instructions with your agent's privileges, so read it like you would read a dependency. Re-check these four links before every delivery.
-  </aside>
 </section>
 
 <section id="further">
@@ -984,7 +864,7 @@ def job_status(job_id: str) -&gt; str:
       <div>
         <h3 class="blue">Worth a look next</h3>
         <ul>
-          <li>GitHub Actions auto-review, in front of human review</li>
+          <li>GitHub Actions auto-review, before human review</li>
           <li><code>git worktree</code> for parallel agent work</li>
           <li>The <code>gh</code> CLI &mdash; let Claude open, read and comment on PRs</li>
         </ul>
@@ -992,9 +872,6 @@ def job_status(job_id: str) -&gt; str:
     </div>
     <p class="footnote">Docs: <code>code.claude.com/docs</code> &middot; <code>research_agentic_coding_workshops.md</code> in this repo for the evidence base.</p>
   </div>
-  <aside class="notes">
-    Point them at the research doc for further reading. The worktree teaser is deliberate: mention it, do not demo it — it is the natural next step once one agent is not enough. Same for gh: it is not installed on the ICP machines, which is why §5 merged locally, but it is worth a sentence — `gh pr list --label claude`, then `gh pr view` and `gh pr comment`, is how an agent picks its own work back up tomorrow.
-  </aside>
 </section>
 
 <section id="cheatsheet">
@@ -1005,8 +882,8 @@ def job_status(job_id: str) -&gt; str:
       <div>
         <h3 class="blue" style="margin-bottom: 10px;">Driving the agent</h3>
         <dl class="kv" style="grid-template-columns: 130px 1fr;">
-          <dt>claude</dt><dd>start, in the repo &mdash; <code>--model sonnet --effort medium</code></dd>
-          <dt>Shift+Tab</dt><dd>plan / edit automatically / manual</dd>
+          <dt>claude</dt><dd><code>--model sonnet --effort medium</code></dd>
+          <dt>Shift+Tab</dt><dd>plan / manual / edit automatically</dd>
           <dt>Esc</dt><dd>interrupt</dd>
           <dt>/init</dt><dd>draft a <code>CLAUDE.md</code> for a repo with none</dd>
           <dt>/memory</dt><dd>open user or project memory</dd>
@@ -1031,18 +908,12 @@ def job_status(job_id: str) -&gt; str:
     </div>
     <p class="footnote">Photograph this slide. &nbsp;Install <code>uv</code>: <code>docs.astral.sh/uv/getting-started/installation</code> &middot; docs: <code>code.claude.com/docs</code></p>
   </div>
-  <aside class="notes">
-    NEW slide — the takeaway artifact. Pause here and let people actually photograph it; it is the one slide they will use tomorrow.
-  </aside>
 </section>
 
 <section id="closing" class="section-divider" data-state="is-divider">
   <p class="loop-line" style="color: #fff;">goal <span class="arrow">→</span> plan <span class="arrow">→</span> act <span class="arrow">→</span> observe <span class="arrow">→</span> revise</p>
   <p style="margin-top: 24px;">Plan first &middot; verify everything &middot; review before you ship &middot; keep it small</p>
   <h1 style="margin-top: 38px;">Now run the loop on your own code.</h1>
-  <aside class="notes">
-    Take-home: run the full loop on one small piece of your own code this week — one function, one test, one PR. Thank them, and stay for questions.
-  </aside>
 </section>
 
 </div>

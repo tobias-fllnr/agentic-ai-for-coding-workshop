@@ -200,6 +200,9 @@
 
 .reveal blockquote p { font-size: inherit; }
 
+/* A prompt to type at the agent, not a quotation */
+.reveal blockquote.prompt { border-left-color: var(--go); }
+
 .reveal blockquote {
   border: none;
   border-left: 3px solid var(--cyan);
@@ -445,6 +448,17 @@
    CODE
    =========================================== */
 
+/* Ligatures off everywhere code appears: JetBrains Mono renders `--` as a
+   single long dash, and these are commands people retype from the screen. */
+.reveal code,
+.reveal pre code,
+.reveal .term,
+.reveal .kv dt,
+.reveal .filename {
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+}
+
 .reveal code {
   font-family: var(--mono-font);
   font-size: 0.86em;
@@ -452,6 +466,14 @@
   color: var(--blue);
   padding: 1px 6px;
   border-radius: 3px;
+}
+
+/* File path label sitting on top of a code block */
+.reveal .filename {
+  font-family: var(--mono-font);
+  font-size: 12pt !important;
+  color: var(--muted);
+  margin: 0 0 -8px 2px;
 }
 
 /* Code inside a heading inherits the heading colour */
@@ -552,6 +574,8 @@
   grid-template-columns: 190px 1fr;
   gap: 4px 16px;
   align-items: baseline;
+  margin: 0;          /* line the keys up with the headline, not indented */
+  padding: 0;
 }
 
 .reveal .kv dt {
