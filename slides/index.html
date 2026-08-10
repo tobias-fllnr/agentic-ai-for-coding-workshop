@@ -193,7 +193,6 @@ uv cache dir                 # same filesystem as the repo?
       </div>
     </div>
     <p class="text-lg">Spend your attention on the divergences that <strong>change the result</strong>.</p>
-    <p class="footnote">Autonomous runs call this <em>implementation drift</em>: the agent quietly substitutes an approach it finds easier. Trehan &amp; Chopra, arXiv:2601.03315 (2026).</p>
   </div>
 </section>
 
@@ -240,7 +239,6 @@ uv cache dir                 # same filesystem as the repo?
       <h3>Reasoning effort</h3>
       <p><code>low · medium · high · xhigh · max</code>, default <code>high</code>. Match the reasoning effort based on the complexity of the task.</p>
     </div>
-    <p class="footnote">Full reference: the cheat sheet at the end.</p>
   </div>
 </section>
 
@@ -376,7 +374,6 @@ claude --model sonnet --effort medium
       <p>For each line ask: <strong>&ldquo;would removing this cause a mistake?&rdquo;</strong> If not &mdash; cut it.</p>
     </div>
     <blockquote style="margin: 0;">Bloated <code>CLAUDE.md</code> files get <strong>ignored</strong>.</blockquote>
-    <p class="footnote">It is <em>context</em>, not enforcement. To make something impossible rather than requested, use a hook (§7).</p>
   </div>
 </section>
 
@@ -411,7 +408,6 @@ Label every axis with units. Save to figures/ as PDF.
       <dt>Edit automatically</dt><dd>edits freely, still asks for commands.</dd>
     </dl>
     <p class="text-lg" style="margin-top: 18px;"><code>/permissions</code> is the allowlist &mdash; grant <code>Bash(uv run pytest)</code> once, stop being asked.</p>
-    <p class="footnote">Your real protection is a clean git tree, not the prompt.</p>
   </div>
 </section>
 
@@ -490,8 +486,6 @@ Label every axis with units. Save to figures/ as PDF.
         <p>The failing test first, then the code that makes it pass.</p>
       </div>
     </div>
-    <p class="footnote">The canonical loop is <em>Explore → Plan → Implement → Commit</em>; <strong>test-first is our addition</strong>.</p>
-  </div>
 </section>
 
 <section id="precise">
@@ -632,7 +626,6 @@ git add -A
 git commit -m "Add RK4 integrator"
 git log --oneline            # two commits: the spec, then the code
     </code></pre>
-    <p class="footnote">Stuck? After two failed tries, <code>/clear</code> and reprompt (§6).</p>
     <p class="done push"><span class="done-label">Done when</span>all tests pass and your branch holds two commits.</p>
   </div>
 </section>
