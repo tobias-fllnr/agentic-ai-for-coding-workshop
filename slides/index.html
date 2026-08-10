@@ -203,7 +203,7 @@ uv add matplotlib                # you will plot later
 
 <section id="divergence">
   <p class="eyebrow">§1 · The agent loop</p>
-  <h2>The one skill: find the divergence</h2>
+  <h2>Find the divergence</h2>
   <div class="content">
     <p class="text-lg">You say what you want built. The agent forms its own plan. <strong>Your job is to find where that plan and your intent come apart</strong> &mdash; and to decide, early, which gaps matter.</p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 18px 0;">
@@ -423,7 +423,6 @@ claude --model sonnet --effort medium
       <p>For each line ask: <strong>&ldquo;would removing this cause a mistake?&rdquo;</strong> If not &mdash; cut it.</p>
     </div>
     <blockquote style="margin: 0;">Bloated <code>CLAUDE.md</code> files get <strong>ignored</strong> &mdash; the rules that matter drown in the noise.</blockquote>
-    <p class="footnote">It is <em>context</em>, delivered as a message &mdash; guidance, not enforcement. To make something impossible instead of merely requested, use a hook (§7).</p>
   </div>
   <aside class="notes">
     Concision over completeness is THE lesson here. Show odelab's short CLAUDE.md as the model, and be honest that the failure mode is writing a style guide nobody — human or model — reads.
@@ -582,7 +581,7 @@ Label every axis with units. Save to figures/ as PDF.
       </div>
       <div class="card go">
         <h3>Precise</h3>
-        <p>&ldquo;Add an <code>rk4_step</code> to <code>odelab/integrators.py</code>, used through <code>integrate(..., method=...)</code>, and assert convergence order 4 the way <code>test_euler_is_first_order</code> does.&rdquo;<span class="verdict">One reading. Nothing left to invent.</span></p>
+        <p>&ldquo;Add an <code>rk4_step</code> to <code>odelab/integrators.py</code>, used through <code>integrate(..., method=...)</code>, and assert convergence order 4 the way <code>test_euler_is_first_order</code> does.&rdquo;<span class="verdict">No room for interpretation.</span></p>
       </div>
     </div>
     <p class="text-lg" style="margin-top: 18px;"><strong>Reduce what the agent has to assume:</strong> which file, which function, what is wrong, how you want it fixed.</p>
@@ -594,17 +593,15 @@ Label every axis with units. Save to figures/ as PDF.
 
 <section id="phase-plan">
   <p class="eyebrow">§5 · Phase 1</p>
-  <h2>Plan, then branch</h2>
+  <h2>Plan first</h2>
   <div class="content">
     <p class="text-lg">Get a plan <strong>before</strong> any code. Plan mode, or a brainstorming pass.</p>
     <ul style="margin-top: 10px;">
       <li>Have Claude draft the plan</li>
       <li>Iteratively improve the plan together with Claude.</li>
-      <li>Approve the plan and then open the branch the work will live on</li>
+      <li>Approve the plan.</li>
     </ul>
-    <pre><code data-trim data-noescape class="language-bash">
-git switch -c add-rk4      # before the first edit, always
-    </code></pre>
+
     <div class="push">
       <ul class="rail">
         <li class="is-active">plan</li>
@@ -625,16 +622,18 @@ git switch -c add-rk4      # before the first edit, always
     <p class="eyebrow">§5 · Phase 1</p>
     <span class="chip">Your turn</span>
   </div>
-  <h2>Plan RK4, open the branch</h2>
+  <h2>Open the branch and plan RK4</h2>
   <div class="content">
+    <pre><code data-trim data-noescape class="language-bash">
+      git switch -c add-rk4
+    </code></pre>
+    </ul>
     <blockquote style="border-left-color: #59B200; margin: 0 0 14px 0;">In plan mode: plan adding an <code>rk4_step</code> to <code>odelab</code>, reusing the existing <code>integrate(..., method=...)</code> hook.</blockquote>
     <ul>
       <li>Review the plan and add a note or two of your own</li>
       <li>Tell it to revise the plan &mdash; <strong>without coding yet</strong></li>
     </ul>
-    <pre><code data-trim data-noescape class="language-bash">
-git switch -c add-rk4
-    </code></pre>
+
     <p class="done push"><span class="done-label">Done when</span>you have a plan you would sign off on, on a fresh branch.</p>
   </div>
   <aside class="notes">
@@ -697,14 +696,6 @@ git commit -am "Add failing RK4 accuracy + convergence tests"
   <h2>Implement &mdash; green</h2>
   <div class="content">
     <p class="text-lg">Now let Claude implement, and <strong>let the tests close the loop</strong>.</p>
-    <p class="term" style="margin: 16px 0;"><span class="c">Editing odelab/integrators.py…</span><br/>
-      <span class="c">Running: uv run pytest -q</span><br/>
-      <span class="bad">FAILED test_rk4_convergence_order — factor 8.1, expected ~16</span><br/>
-      <span class="c">The k3 term steps a full dt. Fixing…</span><br/>
-      <span class="del">- k3 = f(t + dt / 2, y + dt * k2)</span><br/>
-      <span class="add">+ k3 = f(t + dt / 2, y + dt / 2 * k2)</span><br/>
-      <span class="ok">6 passed</span>
-    </p>
     <p class="text-lg">Green tests verfiy the intended feature was implemented. <strong>Commit the result</strong>.</p>
     <div class="push">
       <ul class="rail">
@@ -745,7 +736,7 @@ git log --oneline           # two commits: the spec, then the code
   <p class="eyebrow">§5 · Phase 4</p>
   <h2>Review</h2>
   <div class="content">
-    <p class="text-lg">Two reviewers: the agent, and <strong>you</strong>. Both read the <strong>whole branch</strong>, both commits.</p>
+    <p class="text-lg">Two reviewers: the agent, and <strong>you</strong>. Both read the <strong>whole branch</strong>.</p>
     <ul style="margin-top: 10px;">
       <li><code>/code-review</code> takes your branch against <code>main</code>, or ask Claude to review it <strong>adversarially</strong></li>
       <li><strong>Read the diff yourself</strong> &mdash; correctness first, then clarity</li>
@@ -775,9 +766,9 @@ git log --oneline           # two commits: the spec, then the code
   <h2>Review the diff</h2>
   <div class="content">
     <pre><code data-trim data-noescape class="language-bash">
-git diff main...HEAD      # the whole branch, both commits
+git diff main...HEAD
     </code></pre>
-    <blockquote style="border-left-color: #59B200; margin: 14px 0 0 0;">Review your change for correctness and clarity &mdash; find what is wrong with it.</blockquote>
+    <blockquote style="border-left-color: #59B200; margin: 14px 0 0 0;">Review your change for correctness and clarity.</blockquote>
     <p class="text-lg" style="margin-top: 14px;">Then read it yourself and request one improvement.</p>
     <p class="done push"><span class="done-label">Done when</span>you have read every changed line and the tests still pass.</p>
   </div>
@@ -844,12 +835,11 @@ git log --oneline --graph
 <section id="div-6" class="section-divider" data-state="is-divider">
   <p class="sec-num">§6</p>
   <h1>Common failure patterns</h1>
-  <p>Five ways it goes wrong</p>
 </section>
 
 <section id="patterns">
   <p class="eyebrow">§6 · Failure patterns</p>
-  <h2>Five ways it goes wrong &mdash; and the fix</h2>
+  <h2>Common failure patterns</h2>
   <div class="content" style="justify-content: center;">
     <div class="fix"><p class="pat">Kitchen-sink session</p><p class="rem"><code>/clear</code> between unrelated tasks</p></div>
     <div class="fix"><p class="pat">Correcting over and over</p><p class="rem">After two tries: <code>/clear</code> and a better prompt</p></div>
@@ -865,7 +855,7 @@ git log --oneline --graph
 
 <section id="context-window">
   <p class="eyebrow">§6 · Failure patterns</p>
-  <h2>Why two of those are the same bug</h2>
+  <h2>Context window limitations</h2>
   <div class="content">
     <p class="text-lg">Everything the agent reads &mdash; your files, test output, its own reasoning &mdash; sits in one finite window.</p>
     <p class="term" style="margin: 14px 0;">
