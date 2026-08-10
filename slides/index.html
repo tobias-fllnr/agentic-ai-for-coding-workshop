@@ -20,7 +20,7 @@
   <img class="brandmark" src="images/icp-logo.png" alt="Institute for Computational Physics" />
   <div class="cyan-rule"></div>
   <h1>Agentic AI<br/>for Coding</h1>
-  <p class="lede">A hands-on introduction to Claude Code &mdash; and to a workflow you can trust with research code.</p>
+  <p class="lede">A hands-on introduction to Claude Code.</p>
   <p class="credits">
     Fabian Zills &middot; Tobias Fellner<br/>
     Institute for Computational Physics &middot; University of Stuttgart<br/>
@@ -35,15 +35,11 @@
   <p class="eyebrow">Why you are here</p>
   <h2>The promise</h2>
   <div class="content">
-    <p class="text-xl">By the end you will have <strong>shipped a small, tested, reviewed change</strong> with Claude Code &mdash; using a workflow you can reuse on your own research code.</p>
+    <p class="text-xl">By the end you will have <strong>shipped a small, tested, reviewed change</strong> with Claude Code.</p>
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
       <div class="card plain">
         <h3>Assumes</h3>
         <p>Python and git. <strong>No</strong> prior Claude Code.</p>
-      </div>
-      <div class="card plain">
-        <h3>Style</h3>
-        <p>Short input, <strong>lots</strong> of hands-on.</p>
       </div>
       <div class="card accent">
         <h3>Practice repo</h3>
@@ -80,40 +76,13 @@
   </aside>
 </section>
 
-<section id="half-life">
-  <p class="eyebrow">Read this with a date on it</p>
-  <h2>This deck has a half-life</h2>
-  <div class="content">
-    <p class="text-lg">Everything here is the state of the art in <strong>July 2026</strong>. Tell the durable parts from the volatile ones.</p>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 16px 0;">
-      <div class="card go">
-        <h3>Durable</h3>
-        <p>The loop. A check the agent can run. Small reviewable diffs. Finding the divergence early. You owning the review.</p>
-      </div>
-      <div class="card stop">
-        <h3>Volatile</h3>
-        <p>Model names and their habits. Slash commands. Which third-party skills are worth installing. How much instruction text helps.</p>
-      </div>
-    </div>
-    <p class="term" style="font-size: 13pt !important;">
-      <span class="c">24 Jul 2026, the day Opus 5 shipped:</span> Anthropic removed <span class="ok">over 80%</span> of Claude Code&rsquo;s own<br/>
-      &nbsp;&nbsp;system prompt, with no measurable loss on its coding evaluations.<br/>
-      <span class="c">Feb 2026:</span> same model, better harness &mdash; Terminal-Bench 2.0 <span class="ok">52.8% → 66.5%</span>.<br/>
-      <span class="c">Since Feb 2026:</span> <span class="ok">four</span> Opus-tier flagships in 170 days.</p>
-    <p class="footnote">How to prompt an agent is an open argument, not a settled craft &mdash; and every model answers differently.</p>
-  </div>
-  <aside class="notes">
-    Say this early and mean it: it buys you honesty for the rest of the session and it inoculates them against treating any single command as gospel. The two facts are the argument. Anthropic deleted most of its own system prompt the day Opus 5 shipped and reported no eval loss (Thariq Shihipar, Anthropic, 24 July 2026) — while LangChain showed that holding the model fixed and improving the harness alone moved Terminal-Bench 2.0 by fourteen points (Feb 2026). Structure up, instructions down. Karpathy's reply this week is the third leg: benchmarks do not capture production. Nobody in this argument is obviously wrong, which is exactly why you teach the loop and the verification habit rather than a prompt recipe.
-  </aside>
-</section>
-
 <!-- ============================================================
      §0 — UV
      ============================================================ -->
 <section id="div-0" class="section-divider" data-state="is-divider">
   <p class="sec-num">§0</p>
   <h1><code>uv</code> crash course</h1>
-  <p>The substrate: environments you can reproduce</p>
+  <p>Fast alternative to venv, poetry and co.</p>
 </section>
 
 <section id="why-uv">
@@ -126,7 +95,7 @@
       <li>One tool where you had <code>pip</code>, <code>pip-tools</code>, <code>pipx</code>, <code>poetry</code>, <code>pyenv</code>, <code>virtualenv</code></li>
       <li><code>uv.lock</code> &mdash; a universal lockfile: commit it, and everyone resolves the same versions</li>
       <li>It installs <strong>Python interpreters</strong> too: <code>uv python install 3.12</code></li>
-      <li>A single static binary, and an ordinary <code>.venv</code> underneath &mdash; installs in <code>$HOME</code> on a cluster with no admin rights</li>
+      <li>A single static binary, and an ordinary <code>.venv</code> underneath &mdash; defaults to <code>$HOME</code>.</li>
     </ul>
     <p class="footnote">Install: <code>docs.astral.sh/uv/getting-started/installation</code> &middot; speed figure is Astral&rsquo;s own benchmark, warm cache. Reproducibility for a paper: commit <code>pyproject.toml</code> <em>and</em> <code>uv.lock</code>.</p>
   </div>
@@ -156,12 +125,12 @@ uvx ruff check .          # run a tool in a throwaway environment
 
 <section id="uv-cache">
   <p class="eyebrow">§0 · uv</p>
-  <h2>The cache is the trick</h2>
+  <h2>UV cache on different filesystems</h2>
   <div class="content">
     <p class="text-lg">Installing links a package out of one global cache into your <code>.venv</code> &mdash; copy-on-write <strong>clone</strong> on macOS and Linux, <strong>hardlink</strong> on Windows. Both need the cache and the venv on the <strong>same filesystem</strong>.</p>
     <p class="term" style="margin: 14px 0;"><span class="bad">warning: Failed to hardlink files; falling back to full copy.</span><br/>
       <span class="c">This may lead to degraded performance.</span></p>
-    <p class="text-lg" style="margin-bottom: 10px;">Cache in <code>$HOME</code>, project on <code>/data</code> &mdash; that is a byte-for-byte copy of every wheel. Give each mount its own cache, with <code>direnv</code>:</p>
+    <p class="text-lg" style="margin-bottom: 10px;">Cache in <code>$HOME</code>, project on <code>/data</code> will let uv copy all files. Better give each mount its own cache, e.g. with <code>direnv</code>:</p>
     <pre><code data-trim data-noescape class="language-bash">
 # /data/&lt;user&gt;/.envrc          → and the same under /work, /tikhome
 export UV_CACHE_DIR=/data/$USER/uv-cache
@@ -180,7 +149,6 @@ export UV_CACHE_DIR=/data/$USER/uv-cache
   </div>
   <h2>Get the repo running</h2>
   <div class="content">
-    <p class="text-lg" style="margin-bottom: 10px;"><strong>Fork first</strong> &mdash; recommended, so you can push today&rsquo;s work and open a PR afterwards. A plain clone of the upstream repo works for everything we do here.</p>
     <pre><code data-trim data-noescape class="language-bash">
 git clone https://github.com/&lt;your-user&gt;/odelab.git
 cd odelab
@@ -202,31 +170,6 @@ uv add matplotlib                # you will plot later
 <section id="div-1" class="section-divider" data-state="is-divider">
   <p class="sec-num">§1</p>
   <h1>The agent loop</h1>
-  <p>A mental model that lasts all day</p>
-</section>
-
-<section id="without-agent">
-  <p class="eyebrow">§1 · The agent loop</p>
-  <h2>How you use an LLM today</h2>
-  <div class="content">
-    <div class="flow">
-      <p class="flow-node">You ask</p>
-      <p class="flow-arrow">→</p>
-      <p class="flow-node fill">It answers</p>
-      <p class="flow-arrow">→</p>
-      <p class="flow-node">You copy &amp; paste</p>
-      <p class="flow-arrow">→</p>
-      <p class="flow-node">You run it</p>
-    </div>
-    <ul>
-      <li><strong>You are the executor</strong> &mdash; the model only advises</li>
-      <li>It never sees your files, your environment, or what your code actually did</li>
-      <li>Every result comes back through you, by hand</li>
-    </ul>
-  </div>
-  <aside class="notes">
-    Everyone in the room has done exactly this in a browser tab. Say the line out loud: the human is the executor. The next slide removes that constraint, and the whole workshop follows from it.
-  </aside>
 </section>
 
 <section id="agent-loop">
@@ -281,31 +224,6 @@ uv add matplotlib                # you will plot later
   </aside>
 </section>
 
-<section id="vibe-vs-discipline">
-  <p class="eyebrow">§1 · The agent loop</p>
-  <h2>Vibe-coding vs. AI-assisted engineering</h2>
-  <div class="content">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 26px;">
-      <div class="card plain">
-        <h3 class="muted">Vibe-coding</h3>
-        <p style="margin-bottom: 8px;">Prompt, accept, hope</p>
-        <p style="margin-bottom: 8px;">You read little</p>
-        <p>Fine for throwaway</p>
-      </div>
-      <div class="card">
-        <h3>Disciplined use</h3>
-        <p style="margin-bottom: 8px;">Plan, verify, review</p>
-        <p style="margin-bottom: 8px;"><strong>You own</strong> architecture &amp; review</p>
-        <p>Right for real work</p>
-      </div>
-    </div>
-    <blockquote>Studies of professional developers: they <strong>plan before implementing and validate every output.</strong></blockquote>
-  </div>
-  <aside class="notes">
-    Reassure the physicists: you stay in control. The agent types; you decide and check. This framing recurs in §5.
-  </aside>
-</section>
-
 <section id="triage">
   <p class="eyebrow">§1 · The agent loop</p>
   <h2>When to delegate</h2>
@@ -341,7 +259,6 @@ uv add matplotlib                # you will plot later
   <p class="eyebrow">§2 · Live demo</p>
   <h2>Claude Code in 60 seconds</h2>
   <div class="content">
-    <p class="text-lg" style="margin-bottom: 14px;">One terminal command, started <strong>inside</strong> the repo. Everything else is these five keys.</p>
     <dl class="kv">
       <dt>claude</dt><dd>start a session in the current directory</dd>
       <dt>Shift+Tab</dt><dd>cycle the mode: <strong>plan</strong> (reads only) → edit automatically → manual</dd>
@@ -351,7 +268,7 @@ uv add matplotlib                # you will plot later
     </dl>
     <div class="card" style="margin-top: 16px;">
       <h3>Reasoning effort</h3>
-      <p><code>low · medium · high · xhigh · max</code>, defaulting to <code>high</code>. More effort buys quality on genuinely hard work and costs you minutes of watching it think.</p>
+      <p><code>low · medium · high · xhigh · max</code>, defaulting to <code>high</code>. Select reasoning effort based on the complexity of the task.</p>
     </div>
     <p class="footnote">Full reference: the cheat sheet at the end of this deck.</p>
   </div>
@@ -373,7 +290,7 @@ uv add matplotlib                # you will plot later
       <span class="c">Fixing the argument name…</span><br/>
       <span class="ok">usage: run_decay.py [-h] [--k K] [--y0 Y0] [--steps STEPS]</span>
     </p>
-    <p class="text-lg" style="margin-bottom: 0;">Watch for the <strong>plan</strong> before any code &mdash; and for a <strong>mistake</strong> and its <strong>recovery</strong>. That recovery is the real skill.</p>
+    <p class="text-lg" style="margin-bottom: 0;">Watch for the <strong>plan</strong> before any code &mdash; and for a <strong>mistake</strong> and its <strong>recovery</strong>.</p>
   </div>
   <aside class="notes">
     LIVE, not slides — this transcript is only a fallback if the demo cannot run. Run it in the terminal. Let them see Claude stumble and fix itself; narrate the loop as it happens. Keep it under six minutes. Ask them to jot down one thing they want to try.
@@ -393,7 +310,7 @@ uv add matplotlib                # you will plot later
   <p class="eyebrow">§3 · Understand the repo</p>
   <h2>Explore before you change</h2>
   <div class="content">
-    <p class="text-lg">Build a mental map <em>before</em> touching code &mdash; yours and the agent&rsquo;s.</p>
+    <p class="text-lg">Build a mental map <em>before</em> touching code.</p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 16px;">
       <div class="card accent">
         <h3>Plan mode reads only</h3>
@@ -543,14 +460,13 @@ Label every axis with units. Save to figures/ as PDF.
   <p class="eyebrow">§4 · Steering the agent</p>
   <h2>Permissions</h2>
   <div class="content">
-    <p class="text-lg">Three modes, cycled with <strong>Shift+Tab</strong> &mdash; plus an allowlist for the commands you are tired of approving.</p>
+    <p class="text-lg">Three modes, cycled with <strong>Shift+Tab</strong>.</p>
     <dl class="kv" style="grid-template-columns: 250px 1fr; margin-top: 18px;">
       <dt>Plan</dt><dd>reads only. Explore anything, change nothing.</dd>
       <dt>Manual</dt><dd>the default &mdash; asks before each edit and command.</dd>
       <dt>Edit automatically</dt><dd>edits freely, still asks for commands. Fast, wants a clean git tree.</dd>
       <dt>/permissions</dt><dd>the allowlist &mdash; grant <code>Bash(uv run pytest)</code> once, stop being asked.</dd>
     </dl>
-    <blockquote style="margin: 22px 0 0 0;">Your real protection is <strong>git</strong>, not the permission prompt. Commit before you let it run.</blockquote>
     <p class="footnote">Keep the agent on a leash you have consciously chosen &mdash; a dirty git tree is the one thing that makes a mistake expensive.</p>
   </div>
   <aside class="notes">
@@ -636,7 +552,7 @@ Label every axis with units. Save to figures/ as PDF.
       </div>
       <div class="card">
         <h3>Several commits</h3>
-        <p>The tests, then the implementation. Two commits at least &mdash; commits are cheap.</p>
+        <p>Split your work into small pieces and commit frequently for better tracking and review.</p>
       </div>
     </div>
     <p class="footnote">The canonical loop is <em>Explore → Plan → Implement → Commit</em>, and adversarial review is now part of it. <strong>Test-first is our addition</strong> &mdash; on numerical code it is what makes the rest trustworthy.</p>
@@ -683,9 +599,8 @@ Label every axis with units. Save to figures/ as PDF.
     <p class="text-lg">Get a plan <strong>before</strong> any code. Plan mode, or a brainstorming pass.</p>
     <ul style="margin-top: 10px;">
       <li>Have Claude draft the plan</li>
-      <li><strong>Read it. Annotate it.</strong> Then: <em>&ldquo;address all my notes, do not implement yet&rdquo;</em></li>
-      <li>This is the <strong>divergence check</strong> from §1 &mdash; the cheapest minute in the workshop</li>
-      <li>Sign it off &mdash; then open the branch the work will live on</li>
+      <li>Iteratively improve the plan together with Claude.</li>
+      <li>Approve the plan and then open the branch the work will live on</li>
     </ul>
     <pre><code data-trim data-noescape class="language-bash">
 git switch -c add-rk4      # before the first edit, always
@@ -742,7 +657,7 @@ git switch -c add-rk4
         <p>Double the steps → the error drops <strong>~16×</strong>. Euler manages ~2×.</p>
       </div>
     </div>
-    <p class="text-lg" style="margin: 14px 0 0 0;">The red test is a result worth keeping &mdash; <strong>commit it on its own.</strong></p>
+    <p class="text-lg" style="margin: 14px 0 0 0;"><strong>commit</strong> the red test before starting the implementation</p>
     <div class="push">
       <ul class="rail">
         <li class="is-done">plan</li>
@@ -790,7 +705,7 @@ git commit -am "Add failing RK4 accuracy + convergence tests"
       <span class="add">+ k3 = f(t + dt / 2, y + dt / 2 * k2)</span><br/>
       <span class="ok">6 passed</span>
     </p>
-    <p class="text-lg">Without a runnable check, <em>&ldquo;looks done&rdquo;</em> is the only signal &mdash; and <strong>you</strong> become the verification loop. Green tests earn the <strong>second commit</strong>.</p>
+    <p class="text-lg">Green tests verfiy the intended feature was implemented. <strong>Commit the result</strong>.</p>
     <div class="push">
       <ul class="rail">
         <li class="is-done">plan</li>
@@ -819,7 +734,7 @@ uv run pytest -q
 git commit -am "Add RK4 integrator"
 git log --oneline           # two commits: the spec, then the code
     </code></pre>
-    <p class="done push"><span class="done-label">Done when</span>all tests pass and your branch holds two commits.</p>
+    <p class="done push"><span class="done-label">Done when</span>all tests pass and your branch holds <strong>at least</strong> two commits.</p>
   </div>
   <aside class="notes">
     Hands off the keyboard where possible — the point is watching the loop run itself. If someone is stuck in a correction spiral, that is failure pattern 2 from §6: /clear and reprompt. End by having them read their own git log: "tests, then implementation" is the shape to recognise.
@@ -836,7 +751,7 @@ git log --oneline           # two commits: the spec, then the code
       <li><strong>Read the diff yourself</strong> &mdash; correctness first, then clarity</li>
       <li>Request changes; re-run the tests; commit the fixes</li>
     </ul>
-    <blockquote>Do not merge what you did not read.</blockquote>
+    <blockquote>Avoid merging what you did not review.</blockquote>
     <div class="push">
       <ul class="rail">
         <li class="is-done">plan</li>
@@ -881,7 +796,7 @@ git switch main
 git merge --no-ff add-rk4        # keep the branch visible in the history
 git log --oneline --graph
     </code></pre>
-    <p class="text-lg"><strong>Small and targeted is the point</strong>, not the transport. Two commits you can read in a minute; nobody meaningfully reviews a thousand-line change &mdash; human or agent.</p>
+    <p class="text-lg"><strong>Small and targeted feature implementations.</strong></p>
     <p class="footnote">Same discipline with a remote: push the branch and open a pull request, which is where CI and a second reader come in &mdash; see §7.</p>
     <div class="push">
       <ul class="rail">
