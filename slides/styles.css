@@ -252,6 +252,36 @@
   height: 96px;
 }
 
+.reveal .title-slide .qr {
+  position: absolute;
+  right: var(--slide-pad);
+  bottom: var(--slide-pad);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  border-bottom: none;
+}
+
+.reveal .title-slide .qr img {
+  width: 160px;
+  height: 160px;
+  display: block;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid var(--rule);
+  box-shadow: none;
+  margin: 0;
+}
+
+.reveal .title-slide .qr span {
+  font-size: 11pt;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+  border-bottom: none;
+}
+
 .reveal .cyan-rule {
   width: 120px;
   height: 6px;
@@ -269,22 +299,6 @@
 
 .reveal .slides section.section-divider {
   justify-content: center !important;
-  overflow: hidden;   /* clips the bled section numeral at the slide edge */
-}
-
-/* The section number is a watermark, not a label: oversized,
-   bled off the bottom-right corner, in Hellblau at low opacity. */
-.reveal .section-divider .sec-num {
-  position: absolute;
-  right: 40px;
-  bottom: -78px;
-  font-size: 290pt !important;
-  font-weight: 300;
-  color: rgba(0, 190, 255, 0.17);
-  line-height: 1;
-  margin: 0;
-  letter-spacing: -0.04em;
-  pointer-events: none;
 }
 
 .reveal .section-divider h1 {
@@ -364,7 +378,7 @@
    PHASE RAIL — the deck's signature.
    Five dots echoing the ICP logo's particles.
    Used only where it carries information:
-   the agent loop (§0) and the §5 workflow.
+   the agent loop and the ship-a-feature workflow.
    =========================================== */
 
 .reveal .rail {
@@ -551,7 +565,7 @@
 .reveal .card.go { border-left-color: var(--go); background: rgba(89, 178, 0, 0.08); }
 .reveal .card.plain { background: none; border-left-color: var(--rule); }
 
-/* pattern → fix pairs (§6) */
+/* pattern → fix pairs, on the failure-patterns slide */
 .reveal .fix {
   display: grid;
   grid-template-columns: 360px 1fr;
@@ -611,7 +625,7 @@
 }
 
 /* ===========================================
-   FLOW ROW — the copy-and-paste loop, §1
+   FLOW ROW — the copy-and-paste loop
    =========================================== */
 
 .reveal .flow {

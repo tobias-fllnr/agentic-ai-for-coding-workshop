@@ -26,11 +26,17 @@
     Institute for Computational Physics &middot; University of Stuttgart<br/>
     Söllerhaus Workshop &middot; 2026
   </p>
+  <a class="qr" href="https://slides.pythonf.de/presentations/agentic-ai-for-coding-workshop/">
+    <img src="images/qr-slides.svg" alt="QR code linking to these slides" />
+    <span>slides.pythonf.de</span>
+  </a>
 </section>
 
 <section id="promise">
   <p class="eyebrow">Why you are here</p>
-  <h2>The promise</h2>
+  <h2>Workshop Plan</h2>
+  <br><br>
+  <strong>Find teams where at least one person has a Claude Code subscription.</strong>
   <div class="content">
     <p class="text-xl">By the end you will have <strong>shipped a small, tested, reviewed change</strong>.</p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -52,32 +58,31 @@
   <div class="content">
     <table style="table-layout: fixed;">
       <thead>
-        <tr><th style="width: 8%;">§</th><th>Section</th><th style="width: 20%;">Format</th></tr>
+        <tr><th>Section</th><th style="width: 20%;">Format</th></tr>
       </thead>
       <tbody>
-        <tr><td class="blue bold">0</td><td><code>uv</code> crash course &mdash; get the repo running</td><td class="muted">Hands-on</td></tr>
-        <tr><td class="blue bold">1&ndash;2</td><td>The agent loop + a live demo</td><td class="muted">Input &middot; demo</td></tr>
-        <tr><td class="blue bold">3</td><td>Understand the repo</td><td class="muted">Hands-on</td></tr>
-        <tr><td class="blue bold">4</td><td>Steering the agent</td><td class="muted">Hands-on</td></tr>
-        <tr><td class="muted bold">☕</td><td class="muted">Break</td><td class="muted">5 min</td></tr>
-        <tr><td class="blue bold">5</td><td><strong>Ship a feature: plan → TDD → review → merge</strong></td><td class="muted">The main event</td></tr>
-        <tr><td class="blue bold">6&ndash;7</td><td>Pitfalls &middot; advanced demo &middot; wrap</td><td class="muted">Input &middot; demo</td></tr>
+        <tr><td><code>uv</code> crash course</td><td class="muted">Presentation</td></tr>
+        <tr><td>The agent loop</td><td class="muted">Presentation</td></tr>
+        <tr><td>Understand the repo</td><td class="muted">Hands-on</td></tr>
+        <tr><td>Steering the agent</td><td class="muted">Hands-on</td></tr>
+        <tr><td class="muted">☕ Break</td><td class="muted">5 min</td></tr>
+        <tr><td><strong>Ship a feature: plan → TDD → review → merge</strong></td><td class="muted">Hands-on</td></tr>
+        <tr><td>Pitfalls &middot; beyond the basics &middot; wrap</td><td class="muted">Presentation</td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
 <!-- ============================================================
-     §0 — UV
+     UV
      ============================================================ -->
 <section id="div-0" class="section-divider" data-state="is-divider">
-  <p class="sec-num">§0</p>
   <h1><code>uv</code> crash course</h1>
   <p>Fast alternative to venv, poetry and co.</p>
 </section>
 
 <section id="why-uv">
-  <p class="eyebrow">§0 · uv</p>
+  <p class="eyebrow">uv</p>
   <h2>Why <code>uv</code>?</h2>
   <div class="content">
     <p class="text-lg">One fast tool for <strong>environments + packages + Python itself</strong>.</p>
@@ -87,13 +92,12 @@
       <li><code>uv.lock</code> &mdash; same environment on every machine</li>
       <li>It installs <strong>Python interpreters</strong> too: <code>uv python install 3.12</code></li>
     </ul>
-    <p class="footnote">Install: <code>docs.astral.sh/uv/getting-started/installation</code> &middot; speed figure: Astral&rsquo;s benchmark, warm cache. For a paper, commit <code>pyproject.toml</code> <em>and</em> <code>uv.lock</code>.</p>
   </div>
 </section>
 
 <section id="uv-commands">
-  <p class="eyebrow">§0 · uv</p>
-  <h2>The commands you need</h2>
+  <p class="eyebrow">uv</p>
+  <h2>Cheat sheet</h2>
   <div class="content">
     <pre><code data-trim data-noescape class="language-bash">
 uv init myproject         # new project: pyproject.toml, .python-version, git
@@ -103,29 +107,27 @@ uv run pytest             # run inside the project environment
 uv run scripts/plot.py    # for a .py file, the word "python" is optional
 uvx ruff check .          # run a tool in a throwaway environment
     </code></pre>
-    <p class="text-lg">Everything today runs through <code>uv run</code>.</p>
   </div>
 </section>
 
 <section id="uv-cache">
-  <p class="eyebrow">§0 · uv</p>
+  <p class="eyebrow">uv</p>
   <h2>Keep the cache on the same filesystem</h2>
   <div class="content">
-    <p class="text-lg">Installing <strong>links</strong> a package out of one global cache into your <code>.venv</code> &mdash; and a link cannot cross filesystems.</p>
+    <p class="text-lg">Installing <strong>links</strong> a package out of one global cache into your <code>.venv</code>. For this to work the cache should be on the <strong>same</strong> filesystem.</p>
     <p class="term" style="margin: 14px 0;"><span class="bad">warning: Failed to hardlink files; falling back to full copy.</span><br/>
       <span class="c">This may lead to degraded performance.</span></p>
-    <p class="text-lg" style="margin-bottom: 10px;">Cache in <code>$HOME</code>, project on <code>/data</code> &mdash; uv copies every file. Give each mount its own cache with <code>direnv</code>:</p>
+    <p class="text-lg" style="margin-bottom: 10px;">Cache on <code>/tikhome/&lt;user&gt;/uv-cache</code>, project on <code>/data/&lt;user&gt;/project</code> &mdash; two mounts, so uv falls back to a full copy of every file. Give each mount its own cache with <code>direnv</code>:</p>
     <pre><code data-trim data-noescape class="language-bash">
 # /data/&lt;user&gt;/.envrc          → and the same under /work, /tikhome
 export UV_CACHE_DIR=/data/$USER/uv-cache
     </code></pre>
-    <p class="footnote">On a cluster, prefer the site Python where MPI and BLAS are tuned: <code>--no-managed-python</code>. If inodes are tight, <code>UV_PROJECT_ENVIRONMENT</code> moves the venv to scratch.</p>
   </div>
 </section>
 
 <section id="task-uv" class="task">
   <div class="task-head">
-    <p class="eyebrow">§0 · uv</p>
+    <p class="eyebrow">uv</p>
     <span class="chip">Your turn</span>
   </div>
   <h2>Get the repo running</h2>
@@ -144,18 +146,17 @@ uv cache dir                 # same filesystem as the repo?
 </section>
 
 <!-- ============================================================
-     §1 — THE AGENT LOOP
+     THE AGENT LOOP
      ============================================================ -->
 <section id="div-1" class="section-divider" data-state="is-divider">
-  <p class="sec-num">§1</p>
   <h1>The agent loop</h1>
 </section>
 
 <section id="agent-loop">
-  <p class="eyebrow">§1 · The agent loop</p>
+  <p class="eyebrow">The agent loop</p>
   <h2>What makes it &ldquo;agentic&rdquo;?</h2>
   <div class="content">
-    <p class="text-lg">You set the <strong>goal</strong>. The model <strong>plans</strong>, then runs its own loop:</p>
+    <p class="text-lg">You set the <strong>goal</strong>. The model <strong>plans</strong>, then iterates:</p>
     <ul style="margin-top: 4px;">
       <li><strong>act</strong> &mdash; read and write files, run commands, run tests</li>
       <li><strong>observe</strong> &mdash; errors, test results, diffs</li>
@@ -178,26 +179,25 @@ uv cache dir                 # same filesystem as the repo?
 </section>
 
 <section id="divergence">
-  <p class="eyebrow">§1 · The agent loop</p>
+  <p class="eyebrow">The agent loop</p>
   <h2>Find the divergence</h2>
   <div class="content">
-    <p class="text-lg">You say what you want built. The agent forms its own plan. <strong>Your job is to find where the two come apart</strong> &mdash; and which gaps matter.</p>
+    <p class="text-lg">You say what you want built. The agent writes a plan. <strong>Your job is to find where your plan and the agent's plan disagree</strong>.</p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 18px 0;">
       <div class="card go">
         <h3>It reaches for <code>pytest</code>; you write <code>unittest</code></h3>
-        <p>Same result, different taste.<span class="verdict">Align with it. Move on.</span></p>
+        <p>Same result, different taste.<span class="verdict">Consider accepting it and moving on.</span></p>
       </div>
       <div class="card stop">
         <h3>You want the analytic solution; it plans a neural network</h3>
-        <p>Different science.<span class="verdict">Catch it in the plan, before any code.</span></p>
+        <p>Different goal.<span class="verdict">Catch it in the plan, before any code.</span></p>
       </div>
     </div>
-    <p class="text-lg">Spend your attention on the divergences that <strong>change the result</strong>.</p>
   </div>
 </section>
 
 <section id="triage">
-  <p class="eyebrow">§1 · The agent loop</p>
+  <p class="eyebrow">The agent loop</p>
   <h2>When to delegate</h2>
   <div class="content">
     <p class="text-lg">Agents shine on <strong>small, well-specified</strong> tasks. They can struggle where <strong>architectural judgement</strong> is needed.</p>
@@ -216,16 +216,15 @@ uv cache dir                 # same filesystem as the repo?
 </section>
 
 <!-- ============================================================
-     §2 — LIVE DEMO
+     THE LOOP IN PRACTICE
      ============================================================ -->
 <section id="div-2" class="section-divider" data-state="is-divider">
-  <p class="sec-num">§2</p>
-  <h1>A live demo</h1>
-  <p>The loop in motion &mdash; mistakes included</p>
+  <h1>The loop in practice</h1>
+  <p>What a session looks like &mdash; mistakes included</p>
 </section>
 
 <section id="interface">
-  <p class="eyebrow">§2 · Live demo</p>
+  <p class="eyebrow">The loop in practice</p>
   <h2>Claude Code in 60 seconds</h2>
   <div class="content">
     <dl class="kv">
@@ -242,75 +241,70 @@ uv cache dir                 # same filesystem as the repo?
   </div>
 </section>
 
-<section id="demo">
-  <p class="eyebrow">§2 · Live demo</p>
-  <h2>Watch the loop</h2>
+<section id="loop-in-practice">
+  <p class="eyebrow">The loop in practice</p>
+  <h2>The loop in one session</h2>
   <div class="content">
-    <p class="text-lg">Plain script → a proper CLI. An example of what you are about to see:</p>
+    <p class="text-lg">Plain script → a proper CLI. A typical session:</p>
     <p class="term" style="margin: 16px 0;"><span class="p">&gt;</span> turn scripts/run_decay.py into an argparse CLI with type hints and --help<br/>
       <span class="c">Reading scripts/run_decay.py…</span><br/>
       <span class="c">Editing scripts/run_decay.py…</span><br/>
       <span class="c">Running: uv run scripts/run_decay.py --help</span><br/>
-      <span class="bad">error: unrecognized arguments: --steps</span><br/>
+      <span class="bad">error: unrecognized arguments: --help</span><br/>
       <span class="c">Fixing the argument name…</span><br/>
       <span class="ok">usage: run_decay.py [-h] [--k K] [--y0 Y0] [--steps STEPS]</span>
     </p>
-    <p class="text-lg" style="margin-bottom: 0;">Watch for the <strong>plan</strong>, then a <strong>mistake</strong> and its <strong>recovery</strong>.</p>
-    <p class="footnote">The demo itself runs live in the terminal.</p>
   </div>
 </section>
 
 <!-- ============================================================
-     §3 — UNDERSTAND THE REPO
+     UNDERSTAND THE REPO
      ============================================================ -->
 <section id="div-3" class="section-divider" data-state="is-divider">
-  <p class="sec-num">§3</p>
   <h1>Understand the repo first</h1>
   <p>Read it, then write down what you found</p>
 </section>
 
 <section id="explore">
-  <p class="eyebrow">§3 · Understand the repo</p>
+  <p class="eyebrow">Understand the repo</p>
   <h2>Explore before you change</h2>
   <div class="content">
     <p class="text-lg">Build a mental map <em>before</em> touching code.</p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 16px;">
       <div class="card accent">
         <h3>Plan mode reads only</h3>
-        <p>Claude reads and answers, and changes nothing. Safe to point at code you care about.</p>
+        <p>Claude reads and answers, and changes nothing.</p>
       </div>
       <div class="card accent">
         <h3>Ask for the map</h3>
         <p>Structure, entry points, how to run it, where the tests live.</p>
       </div>
     </div>
-    <blockquote>Understanding now is cheaper than unwinding a wrong change later.</blockquote>
   </div>
 </section>
 
 <section id="init">
-  <p class="eyebrow">§3 · Understand the repo</p>
+  <p class="eyebrow">Understand the repo</p>
   <h2>Write the map down: <code>CLAUDE.md</code></h2>
   <div class="content">
-    <p class="text-lg">A repo can carry its own briefing: commands, layout, conventions.</p>
+    <p class="text-lg">A repo can carry its own agentic instructions: commands, layout, conventions.</p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 18px 0;">
       <div class="card">
         <h3>Plan mode</h3>
-        <p>How <strong>you</strong> read the repo. Answers leave with the conversation.</p>
+        <p>How <strong>you</strong> read the repo. <i>Ephemeral</i>.</p>
       </div>
       <div class="card">
         <h3><code>CLAUDE.md</code></h3>
-        <p>How the <strong>repo</strong> remembers. One file, in git, loaded every session.</p>
+        <p>How the <strong>repo</strong> remembers. <i>Permanent.</i></p>
       </div>
     </div>
-    <p class="text-lg">No <code>CLAUDE.md</code> yet? <code>/init</code> drafts one &mdash; then you <strong>cut it down</strong> (§4).</p>
-    <p class="footnote">Not today: <code>odelab</code> already has one, so <code>/init</code> would only offer to tidy it.</p>
+    <p class="text-lg">No <code>CLAUDE.md</code> yet? <code>/init</code> drafts one for you to review and improve.</p>
   </div>
 </section>
 
 <section id="task-explore" class="task">
   <div class="task-head">
-    <p class="eyebrow">§3 · Understand the repo</p>
+    <p class="eyebrow">Understand the repo</p>
     <span class="chip">Your turn</span>
   </div>
   <h2>Explain <code>odelab</code></h2>
@@ -327,16 +321,15 @@ claude --model sonnet --effort medium
 </section>
 
 <!-- ============================================================
-     §4 — STEERING
+     STEERING
      ============================================================ -->
 <section id="div-4" class="section-divider" data-state="is-divider">
-  <p class="sec-num">§4</p>
   <h1>Steering the agent</h1>
   <p>Memory, skills, permissions &mdash; and where your data goes</p>
 </section>
 
 <section id="memory-scopes">
-  <p class="eyebrow">§4 · Steering the agent</p>
+  <p class="eyebrow">Steering the agent</p>
   <h2>Three kinds of memory</h2>
   <div class="content">
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;">
@@ -353,32 +346,19 @@ claude --model sonnet --effort medium
         <p><strong>Auto memory.</strong> Claude&rsquo;s own notes on your project. On by default, machine-local.</p>
       </div>
     </div>
-    <p class="text-lg" style="margin: 14px 0 8px 0;">The first two are instructions <em>you</em> write. User memory costs tokens in <strong>every</strong> session &mdash; a real one:</p>
+    <p class="text-lg" style="margin: 14px 0 8px 0;">The first two are instructions <em>you</em> write. User memory costs tokens in <strong>every</strong> session. </p>
+    <strong>Example:</strong>
     <p class="term" style="font-size: 12pt !important;">All Python projects use uv!<br/>
       Docstrings must follow numpy style!<br/>
       Never modify tests marked <span class="p">@pytest.mark.protected</span> without explicit approval!<br/>
       GH issues and PRs must include <span class="p">p-&lt;x&gt;</span> priority and <span class="p">effort-&lt;x&gt;</span> labels.<br/>
       New features must start in a branch or git worktree.<br/>
       Explicit Error &gt; User Warning &gt; Silent Failure &gt; Crash.</p>
-    <p class="footnote"><code>/memory</code> lists and opens all of them.</p>
-  </div>
-</section>
-
-<section id="claude-md">
-  <p class="eyebrow">§4 · Steering the agent</p>
-  <h2><code>CLAUDE.md</code> &mdash; project memory</h2>
-  <div class="content">
-    <p class="text-lg">Instructions Claude reads <strong>every session</strong>: conventions, how to run things, gotchas. Loaded in full, however long it is &mdash; so keep it <strong>short</strong>.</p>
-    <div class="card" style="margin: 14px 0;">
-      <h3>The concision test</h3>
-      <p>For each line ask: <strong>&ldquo;would removing this cause a mistake?&rdquo;</strong> If not &mdash; cut it.</p>
-    </div>
-    <blockquote style="margin: 0;">Bloated <code>CLAUDE.md</code> files get <strong>ignored</strong>.</blockquote>
   </div>
 </section>
 
 <section id="skills">
-  <p class="eyebrow">§4 · Steering the agent</p>
+  <p class="eyebrow">Steering the agent</p>
   <h2>Skills &mdash; instructions on demand</h2>
   <div class="content">
     <p class="text-lg"><code>CLAUDE.md</code> is always loaded. A <strong>skill</strong> loads only when its <code>description</code> matches.</p>
@@ -398,7 +378,7 @@ Label every axis with units. Save to figures/ as PDF.
 </section>
 
 <section id="permissions">
-  <p class="eyebrow">§4 · Steering the agent</p>
+  <p class="eyebrow">Steering the agent</p>
   <h2>Permissions</h2>
   <div class="content">
     <p class="text-lg">Three modes, cycled with <strong>Shift+Tab</strong>.</p>
@@ -411,41 +391,12 @@ Label every axis with units. Save to figures/ as PDF.
   </div>
 </section>
 
-<section id="privacy">
-  <p class="eyebrow">§4 · Steering the agent</p>
-  <h2>Where does your data go?</h2>
-  <div class="content">
-    <p class="term" style="margin-bottom: 16px;"><span class="p">$</span> git clone git@gitlab.icp.uni-stuttgart.de:icp/me/unpublished-results<br/>
-      <span class="p">$</span> claude <span class="ok">&ldquo;summarise these results and write the methods section&rdquo;</span></p>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-      <div class="card plain">
-        <h3>The agent reads everything</h3>
-        <p>Files it opens are sent to a service outside your institution.</p>
-      </div>
-      <div class="card plain">
-        <h3>Policies vary and change</h3>
-        <p>Retention and training terms differ per plan, and change.</p>
-      </div>
-      <div class="card plain">
-        <h3>Unpublished work</h3>
-        <p>Results, drafts, grant text, reviewer comments, student data.</p>
-      </div>
-      <div class="card plain">
-        <h3>Rules you signed</h3>
-        <p>Institutional policy, funder terms, GDPR, industry NDAs.</p>
-      </div>
-    </div>
-    <blockquote style="margin: 16px 0 0 0;">Would you be comfortable with a third party reading this? If not, keep it out of the agent.</blockquote>
-    <p class="footnote">University AI services: <code>uni-stuttgart.de/en/digital-services/ai-for-students</code> &middot; ICP runs a local model for privacy-sensitive questions.</p>
-  </div>
-</section>
-
 <section id="task-steering" class="task">
   <div class="task-head">
-    <p class="eyebrow">§4 · Steering the agent</p>
+    <p class="eyebrow">Steering the agent</p>
     <span class="chip">Your turn</span>
   </div>
-  <h2>Feel the steering</h2>
+  <h2>Try yourself</h2>
   <div class="content">
     <p class="text-lg" style="margin-bottom: 12px;">Pick <strong>one or two</strong>:</p>
     <ol>
@@ -463,16 +414,15 @@ Label every axis with units. Save to figures/ as PDF.
 </section>
 
 <!-- ============================================================
-     §5 — SHIP A FEATURE
+     SHIP A FEATURE
      ============================================================ -->
 <section id="div-5" class="section-divider" data-state="is-divider">
-  <p class="sec-num">§5</p>
   <h1>Ship a feature</h1>
   <p>plan → test → implement → review → ship</p>
 </section>
 
 <section id="rk4-task">
-  <p class="eyebrow">§5 · Ship a feature</p>
+  <p class="eyebrow">Ship a feature</p>
   <h2>The task: add RK4</h2>
   <div class="content">
     <p class="text-lg">Add a <strong>4th-order Runge&ndash;Kutta</strong> step alongside Euler &mdash; and prove it is better.</p>
@@ -489,7 +439,7 @@ Label every axis with units. Save to figures/ as PDF.
 </section>
 
 <section id="precise">
-  <p class="eyebrow">§5 · Ship a feature</p>
+  <p class="eyebrow">Ship a feature</p>
   <h2>Say it precisely</h2>
   <div class="content">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
@@ -507,14 +457,14 @@ Label every axis with units. Save to figures/ as PDF.
 </section>
 
 <section id="phase-plan">
-  <p class="eyebrow">§5 · Phase 1</p>
+  <p class="eyebrow">Ship a feature · Phase 1</p>
   <h2>Plan first</h2>
   <div class="content">
     <p class="text-lg">Get a plan <strong>before</strong> any code. Plan mode, or a brainstorming pass.</p>
     <ul style="margin-top: 10px;">
+      <li>Open a new branch</li>
       <li>Have Claude draft the plan</li>
       <li>Revise it together</li>
-      <li>Approve it, then open the branch</li>
     </ul>
 
     <div class="push">
@@ -531,28 +481,30 @@ Label every axis with units. Save to figures/ as PDF.
 
 <section id="task-plan" class="task">
   <div class="task-head">
-    <p class="eyebrow">§5 · Phase 1</p>
+    <p class="eyebrow">Ship a feature · Phase 1</p>
     <span class="chip">Your turn</span>
   </div>
   <h2>Open the branch and plan RK4</h2>
   <div class="content">
     <pre><code data-trim data-noescape class="language-bash">
-    git stash -u               # park your §4 experiments
+    git stash -u               # park your steering experiments
     git switch -c add-rk4
     </code></pre>
     <blockquote class="prompt" style="margin: 0 0 14px 0;">In plan mode: plan adding an <code>rk4_step</code> to <code>odelab</code>, reusing the existing <code>integrate(..., method=...)</code> hook.</blockquote>
     <ul>
       <li>Add a note or two of your own</li>
-      <li>Have it revise &mdash; <strong>without coding yet</strong></li>
+      <li>Revise the plan (if needed)</li>
+      <li><strong>Do not approve the plan for implementation yet!</strong></li>
     </ul>
     <p class="done push"><span class="done-label">Done when</span>you have a plan you would sign off on, on a fresh branch.</p>
   </div>
 </section>
 
 <section id="phase-test">
-  <p class="eyebrow">§5 · Phase 2</p>
+  <p class="eyebrow">Ship a feature · Phase 2</p>
   <h2>Test first &mdash; red, then commit</h2>
   <div class="content">
+    <p class="text-lg">Prompt the agent to use test-driven development: design a failing test first.</p>
     <p class="text-lg">Give the agent a <strong>pass/fail check</strong> it can run itself.</p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 14px;">
       <div class="card accent">
@@ -579,12 +531,12 @@ Label every axis with units. Save to figures/ as PDF.
 
 <section id="task-test" class="task">
   <div class="task-head">
-    <p class="eyebrow">§5 · Phase 2</p>
+    <p class="eyebrow">Ship a feature · Phase 2</p>
     <span class="chip">Your turn</span>
   </div>
   <h2>Write the failing test</h2>
   <div class="content">
-    <blockquote class="prompt" style="margin: 0 0 14px 0;">Add tests for <code>rk4_step</code> <strong>before</strong> implementing it: the analytic solution, and the convergence order.</blockquote>
+    <blockquote class="prompt" style="margin: 0 0 14px 0;">Prompt the agent to add tests for <code>rk4_step</code> <strong>before</strong> implementing it: the analytic solution, and the convergence order.</blockquote>
     <pre><code data-trim data-noescape class="language-bash">
 uv run pytest -q             # RED — rk4_step does not exist yet
 git add -A
@@ -594,27 +546,9 @@ git commit -m "Add failing RK4 accuracy + convergence tests"
   </div>
 </section>
 
-<section id="phase-implement">
-  <p class="eyebrow">§5 · Phase 3</p>
-  <h2>Implement &mdash; green</h2>
-  <div class="content">
-    <p class="text-lg">Now let Claude implement, and <strong>let the tests close the loop</strong>.</p>
-    <p class="text-lg"><strong>Commit the result.</strong></p>
-    <div class="push">
-      <ul class="rail">
-        <li class="is-done">plan</li>
-        <li class="is-done">test</li>
-        <li class="is-active">implement</li>
-        <li>review</li>
-        <li>ship</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
 <section id="task-implement" class="task">
   <div class="task-head">
-    <p class="eyebrow">§5 · Phase 3</p>
+    <p class="eyebrow">Ship a feature · Phase 3</p>
     <span class="chip">Your turn</span>
   </div>
   <h2>Make it green</h2>
@@ -631,13 +565,13 @@ git log --oneline            # two commits: the spec, then the code
 </section>
 
 <section id="phase-review">
-  <p class="eyebrow">§5 · Phase 4</p>
+  <p class="eyebrow">Ship a feature · Phase 4</p>
   <h2>Review</h2>
   <div class="content">
-    <p class="text-lg">Two reviewers: the agent, and <strong>you</strong>. Both read the <strong>whole branch</strong>.</p>
+    <p class="text-lg">Two reviewers: the agent, and <strong>you</strong>.</p>
     <ul style="margin-top: 10px;">
       <li><code>/code-review</code> takes your branch against <code>main</code>, or ask Claude to review it <strong>adversarially</strong></li>
-      <li><strong>Read the diff yourself</strong> &mdash; correctness first, then clarity</li>
+      <li><strong>Review the changes yourself</strong></li>
       <li>Request changes; re-run the tests; commit the fixes</li>
     </ul>
     <blockquote>Merge only what you have read.</blockquote>
@@ -655,7 +589,7 @@ git log --oneline            # two commits: the spec, then the code
 
 <section id="task-review" class="task">
   <div class="task-head">
-    <p class="eyebrow">§5 · Phase 4</p>
+    <p class="eyebrow">Ship a feature · Phase 4</p>
     <span class="chip">Your turn</span>
   </div>
   <h2>Review the diff</h2>
@@ -670,15 +604,11 @@ git diff main...HEAD
 </section>
 
 <section id="phase-ship">
-  <p class="eyebrow">§5 · Phase 5</p>
+  <p class="eyebrow">Ship a feature · Phase 5</p>
   <h2>Land it on <code>main</code></h2>
   <div class="content">
     <p class="text-lg">Two commits, every line read. Hand the merge to Claude:</p>
     <blockquote class="prompt">merge <code>add-rk4</code> into <code>main</code> with <code>--no-ff</code>, and write the message: what &amp; why, and how you tested it.</blockquote>
-    <pre><code data-trim data-noescape class="language-bash">
-git log --oneline --graph    # the branch is still visible
-    </code></pre>
-    <p class="footnote">With a remote, the same discipline is a pull request &mdash; see §7.</p>
     <div class="push">
       <ul class="rail">
         <li class="is-done">plan</li>
@@ -693,7 +623,7 @@ git log --oneline --graph    # the branch is still visible
 
 <section id="task-ship" class="task">
   <div class="task-head">
-    <p class="eyebrow">§5 · Phase 5</p>
+    <p class="eyebrow">Ship a feature · Phase 5</p>
     <span class="chip">Your turn</span>
   </div>
   <h2>Merge it</h2>
@@ -704,34 +634,33 @@ uv run pytest                # green on main, not just on the branch
 git log --oneline --graph
     </code></pre>
     <div class="card go" style="margin-top: 14px;">
-      <h3 class="go">Fast finishers</h3>
-      <p>The plots and the logistic example misbehave. <code>uv add matplotlib</code>, then hunt the planted <strong>bugs</strong> &mdash; start with <code>scripts/plot_decay.py</code>.</p>
+      <h3 class="go">Bonus Task</h3>
+      <p>The plots and the logistic example misbehave. <code>uv add matplotlib</code>, then fix the <strong>bugs</strong></p>
     </div>
     <p class="done push"><span class="done-label">Done when</span><code>main</code> holds your feature, the tests are green, and the graph shows the branch.</p>
   </div>
 </section>
 
 <!-- ============================================================
-     §6 — FAILURE PATTERNS
+     FAILURE PATTERNS
      ============================================================ -->
 <section id="div-6" class="section-divider" data-state="is-divider">
-  <p class="sec-num">§6</p>
   <h1>Common failure patterns</h1>
 </section>
 
 <section id="patterns">
-  <p class="eyebrow">§6 · Failure patterns</p>
+  <p class="eyebrow">Failure patterns</p>
   <h2>Common failure patterns</h2>
   <div class="content" style="justify-content: center;">
     <div class="fix"><p class="pat">Kitchen-sink session</p><p class="rem"><code>/clear</code> between unrelated tasks</p></div>
     <div class="fix"><p class="pat">Correcting over and over</p><p class="rem">After two tries: <code>/clear</code> and a better prompt</p></div>
-    <div class="fix"><p class="pat">Over-specified <code>CLAUDE.md</code></p><p class="rem">Prune ruthlessly</p></div>
+    <div class="fix"><p class="pat">Over-specified <code>CLAUDE.md</code></p><p class="rem">Keep minimal</p></div>
     <div class="fix"><p class="pat">Trust-then-verify gap</p><p class="rem">Always give a check. Cannot verify → do not ship</p></div>
     <div class="fix"><p class="pat">Infinite exploration</p><p class="rem">Scope narrowly, or delegate to a subagent</p></div>
 </section>
 
 <section id="context-window">
-  <p class="eyebrow">§6 · Failure patterns</p>
+  <p class="eyebrow">Failure patterns</p>
   <h2>Context window limitations</h2>
   <div class="content">
     <p class="text-lg">Everything the agent reads &mdash; your files, test output, its own reasoning &mdash; sits in one finite window.</p>
@@ -742,24 +671,22 @@ git log --oneline --graph
       &nbsp;20%|<span class="ok">████</span><span class="c">░░░░░░░░░░░░░░░░</span>| <span class="c">summarised — the detail is gone</span>
     </p>
     <ul style="margin-top: 4px;">
-      <li><code>/context</code> &mdash; what is filling it, including your <code>CLAUDE.md</code></li>
-      <li><code>/clear</code> between unrelated tasks &middot; <code>/compact</code> to keep going through one</li>
-      <li><strong>Write it to disk.</strong> A plan file survives compaction; a subagent keeps its reading out of your window</li>
+      <li><code>/context</code> &mdash; Overview of current context usage</li>
+      <li><code>/clear</code> between unrelated tasks &middot; <code>/compact</code> only if necessary</li>
     </ul>
   </div>
 </section>
 
 <!-- ============================================================
-     §7 — BEYOND THE BASICS
+     BEYOND THE BASICS
      ============================================================ -->
 <section id="div-7" class="section-divider" data-state="is-divider">
-  <p class="sec-num">§7</p>
   <h1>Beyond the basics</h1>
-  <p>One more demo, and where to go next</p>
+  <p>Where to go next</p>
 </section>
 
 <section id="advanced">
-  <p class="eyebrow">§7 · Beyond the basics</p>
+  <p class="eyebrow">Beyond the basics</p>
   <h2>Subagents and hooks</h2>
   <div class="content">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
@@ -787,7 +714,7 @@ git log --oneline --graph
 </section>
 
 <section id="mcp">
-  <p class="eyebrow">§7 · Beyond the basics</p>
+  <p class="eyebrow">Beyond the basics</p>
   <h2>MCP &mdash; hand the agent a new tool</h2>
   <div class="content">
     <p class="text-lg">One protocol between agents and tools. Anthropic published it in 2024; the other vendors adopted it.</p>
@@ -806,13 +733,12 @@ def job_status(job_id: str) -&gt; str:
       <li>The type hints tell the agent <strong>what to pass</strong></li>
       <li>The docstring tells it <strong>when to call</strong> &mdash; the same lesson as a skill&rsquo;s <code>description</code></li>
     </ul>
-    <p class="footnote">Try <strong>Context7</strong> first: current library docs, so the agent stops guessing APIs.</p>
   </div>
 </section>
 
 <section id="tools">
-  <p class="eyebrow">§7 · Beyond the basics</p>
-  <h2>What other people have built</h2>
+  <p class="eyebrow">Beyond the basics</p>
+  <h2>Agentic Coding Frameworks and Tools</h2>
   <div class="content">
     <dl class="kv" style="grid-template-columns: 345px 1fr;">
       <dt>sirmalloc/ccstatusline</dt><dd>a status line: model, context left, cost, at a glance</dd>
@@ -824,65 +750,21 @@ def job_status(job_id: str) -&gt; str:
 /plugin install superpowers@claude-plugins-official
     </code></pre>
     <p class="text-lg">Read a skill before you install it: instructions going straight into your agent.</p>
-    <p class="footnote">The fastest-moving slide in the deck &mdash; <code>superpowers</code> has look-alike forks. Check what you are installing.</p>
   </div>
 </section>
 
 <section id="further">
-  <p class="eyebrow">§7 · Beyond the basics</p>
+  <p class="eyebrow">Beyond the basics</p>
   <h2>Take it further</h2>
   <div class="content">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 26px;">
-      <div>
-        <h3 class="blue">For your research code</h3>
-        <ul>
-          <li>Numerical and property tests = your verifiable check</li>
-          <li><code>uv</code> + a lockfile = a reproducible environment</li>
-          <li>Small PRs = code review that actually happens</li>
-        </ul>
-      </div>
-      <div>
-        <h3 class="blue">Worth a look next</h3>
-        <ul>
-          <li>GitHub Actions auto-review, before human review</li>
-          <li><code>git worktree</code> for parallel agent work</li>
-          <li>The <code>gh</code> CLI &mdash; let Claude open, read and comment on PRs</li>
-        </ul>
-      </div>
-    </div>
-</section>
-
-<section id="cheatsheet">
-  <p class="eyebrow">§7 · Beyond the basics</p>
-  <h2>Cheat sheet</h2>
-  <div class="content">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-      <div>
-        <h3 class="blue" style="margin-bottom: 10px;">Driving the agent</h3>
-        <dl class="kv" style="grid-template-columns: 130px 1fr;">
-          <dt>Shift+Tab</dt><dd>plan / manual / edit automatically</dd>
-          <dt>Esc</dt><dd>interrupt</dd>
-          <dt>/init</dt><dd>draft a <code>CLAUDE.md</code> for a repo with none</dd>
-          <dt>/memory</dt><dd>open user or project memory</dd>
-          <dt>/context</dt><dd>what is filling the window</dd>
-          <dt>/clear</dt><dd>new task, clean context</dd>
-          <dt>/permissions</dt><dd>the allowlist</dd>
-          <dt>/code-review</dt><dd>review the diff</dd>
-        </dl>
-      </div>
-      <div>
-        <h3 class="blue" style="margin-bottom: 10px;">The workflow</h3>
-        <dl class="kv" style="grid-template-columns: 130px 1fr;">
-          <dt>explore</dt><dd>plan mode, ask for the map</dd>
-          <dt>plan</dt><dd>read it, annotate, revise</dd>
-          <dt>branch</dt><dd><code>git switch -c</code>, before any edit</dd>
-          <dt>test</dt><dd>red for the right reason, commit</dd>
-          <dt>implement</dt><dd>green, commit again</dd>
-          <dt>review</dt><dd>adversarial, then your own eyes</dd>
-          <dt>ship</dt><dd><code>git merge --no-ff</code>, or a PR</dd>
-        </dl>
-      </div>
-    </div>
+    <h3 class="blue">Worth a look next</h3>
+    <ul>
+      <li>Small PRs = code review that actually happens</li>
+      <li>GitHub Actions auto-review</li>
+      <li><code>git worktree</code> for parallel agent work</li>
+      <li>The <code>gh</code> CLI &mdash; let Claude open, read and comment on PRs</li>
+    </ul>
+  </div>
 </section>
 
 <section id="closing" class="section-divider" data-state="is-divider">
